@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Bhag Laxmi - Results Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #FFFF00;
+        }
+        
+        .header {
+            background-color: #1a1a1a;
+        }
+        
+        .table-header {
+            background-color: #2d2d2d;
+            color: #FFFF00;
+            font-weight: bold;
+        }
+        
+        .table-row-odd {
+            background-color: #000000;
+            color: #FFFF00;
+        }
+        
+        .table-row-even {
+            background-color: #1a1a1a;
+            color: #FFFF00;
+        }
+        
+        .btn-primary {
+            background-color: #FFFF00;
+            color: #1a1a1a;
+            font-weight: bold;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #ffff33;
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background-color: #666;
+            color: #FFFF00;
+            font-weight: bold;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #888;
+        }
+        
+        .input-date {
+            background-color: #333;
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-weight: bold;
+        }
+        
+        .input-date::placeholder {
+            color: #999;
+        }
+        
+        .section-title {
+            color: #1a1a1a;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px;
+            background-color: #FFFF00;
+            border-radius: 4px;
+        }
+        
+        .admin-panel {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #FFFF00;
+        }
+        
+        .admin-input {
+            background-color: #333;
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .scrollable-table {
+            overflow-x: auto;
+        }
+        
+        .table-cell-pending {
+            opacity: 0.6;
+            font-style: italic;
+            color: #FFAA00;
+            text-decoration: underline dotted;
+        }
+        
+        .table-cell-confirmed {
+            font-weight: bold;
+            color: #00FF00;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 1200px;
+        }
+        
+        th,
+        td {
+            border: 1px solid #FFFF00;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        th {
+            background-color: #2d2d2d;
+            color: #FFFF00;
+            font-weight: bold;
+        }
+        
+        .close-btn {
+            background-color: #FFFF00;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .close-btn:hover {
+            background-color: #ffff33;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: #1a1a1a;
+            border: 2px solid #FFFF00;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: #FFFF00;
+        }
+        
+        .header-clock-box {
+            min-width: 150px;
+            text-align: center;
+            padding: 6px 10px;
+            border: 1px solid #FFFF00;
+            border-radius: 6px;
+            background-color: #101010;
+            color: #FFFF00;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        
+        @media (max-width: 768px) {
+            .scrollable-table {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 400px;
+            }
+            th,
+            td {
+                padding: 8px;
+                font-size: 12px;
+            }
+            .header-clock-box {
+                min-width: 120px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-6">
+    <!-- Header -->
+    <div class="header rounded-lg mb-6 p-6 shadow-lg">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl md:text-4xl font-bold" style="color: #FFFF00;">🎰 Test Your Fortune</h1>
+            <div class="flex items-center gap-3">
+                <div id="liveDate" class="header-clock-box"></div>
+                <div id="liveTime" class="header-clock-box"></div>
+                <button class="btn-secondary" onclick="openAdminAuthModal()">Admin Panel</button>
+            </div>
+        </div>
+        <p class="text-gray-400 mt-2">Check your lucky numbers</p>
+    </div>
+
+    <!-- Admin Password Modal -->
+    <div id="adminAuthModal" class="modal-overlay">
+        <div class="modal-content" style="width: 420px; max-width: 92%;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Admin Authentication</h2>
+                <button class="close-btn" onclick="closeAdminAuthModal()">✕</button>
+            </div>
+
+            <form onsubmit="submitAdminPassword(event)">
+                <label class="block text-sm mb-2">Enter admin password</label>
+                <input id="adminPasswordInput" type="password" class="admin-input w-full mb-4" placeholder="Password" autocomplete="current-password">
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="btn-secondary" onclick="closeAdminAuthModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Unlock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Show Result Section -->
+    <div class="bg-black rounded-lg mb-6 p-6 border-2" style="border-color: #FFFF00;">
+        <div class="section-title mb-4">📅 Show Result</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+                <label class="block font-bold mb-2" style="color: #a02d2d;">Start Date</label>
+                <input type="date" id="startDate" class="input-date w-full" value="">
+            </div>
+            <div>
+                <label class="block font-bold mb-2" style="color: #a02d2d;">End Date</label>
+                <input type="date" id="endDate" class="input-date w-full" value="">
+            </div>
+            <div class="flex gap-2">
+                <button class="btn-primary flex-1 md:flex-none" onclick="filterResults()">Go</button>
+                <button class="btn-secondary flex-1 md:flex-none" onclick="resetFilter()">Reset</button>
+            </div>
+            <div class="text-right">
+                <span id="recordCount" class="font-bold" style="color: #1a1a1a;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="bg-black rounded-lg p-4 md:p-6 border-2 shadow-lg" style="border-color: #FFFF00;">
+        <div class="section-title mb-4">📊 Results Table</div>
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr class="table-header">
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable">
+                    <!-- Table rows will be generated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Admin Panel - Enter Results</h2>
+                <button class="close-btn" onclick="toggleAdminPanel()">✕</button>
+            </div>
+
+            <!-- Date and Time Selection for Admin -->
+            <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <label class="block font-bold mb-2">Select Date and Time</label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm mb-1">Date</label>
+                        <input type="date" id="adminDate" class="admin-input w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Time</label>
+                        <select id="adminTime" class="admin-input w-full">
+                            <option value="">Select Time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">&nbsp;</label>
+                        <button class="btn-primary w-full" onclick="loadAdminData()">Load</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Input -->
+            <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <label class="block font-bold mb-4">Winning Number</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm mb-1">Result (0-99)</label>
+                        <input type="text" id="result" class="admin-input w-full" maxlength="2" placeholder="00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 justify-end">
+                <button class="btn-secondary" onclick="toggleAdminPanel()">Cancel</button>
+                <button id="adminSaveBtn" class="btn-primary" onclick="saveAdminData()">Save Results</button>
+            </div>
+
+            <!-- Stored Data Preview -->
+            <div class="mt-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <label class="block font-bold mb-2">Stored Data</label>
+                <div id="storedDataPreview" style="max-height: 300px; overflow-y: auto; font-size: 12px;">
+                    <!-- Data list will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20260416-8"></script>
+</body>
+
+</html>
