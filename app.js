@@ -640,18 +640,18 @@ function saveAdminData() {
     const value = document.getElementById('result').value.trim();
 
     if (!value) {
-        alert('Please enter a result number');
+        alert('Please enter a result value');
         return;
     }
 
-    if (!/^\d{1,2}$/.test(value)) {
-        alert('Result must be a number between 0-99');
+    if (!/^[a-zA-Z0-9]{1,10}$/.test(value)) {
+        alert('Result can contain letters, numbers, or both (1-10 characters, no spaces).');
         return;
     }
 
-    const number = value.padStart(2, '0');
+    const resultValue = value;
 
-    lotteryData.saveResult(date, time, number);
+    lotteryData.saveResult(date, time, resultValue);
     alert(`Result saved for ${date} at ${time}`);
     populateStoredDataPreview();
 
