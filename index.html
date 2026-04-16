@@ -300,6 +300,17 @@
                 <button class="close-btn" onclick="toggleAdminPanel()">✕</button>
             </div>
 
+            <!-- Generator Mode Toggle -->
+            <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <label class="block font-bold">Result Generator Mode</label>
+                        <p id="generatorModeText" class="text-sm" style="color: #FFDD66;">Current Mode: AUTO</p>
+                    </div>
+                    <button id="toggleGeneratorModeBtn" class="btn-secondary" onclick="toggleGeneratorMode()">Switch to Manual</button>
+                </div>
+            </div>
+
             <!-- Date and Time Selection for Admin -->
             <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
                 <label class="block font-bold mb-2">Select Date and Time</label>
@@ -348,7 +359,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20260416-9"></script>
+    <script src="app.js?v=20260416-10"></script>
 </body>
 
 </html>

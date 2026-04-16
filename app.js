@@ -90,13 +90,27 @@ function saveConfirmedNumbers() {
     localStorage.setItem('lotteryConfirmedResults', JSON.stringify(confirmedNumbers));
 }
 
+function loadGeneratorMode() {
+    const stored = localStorage.getItem('lotteryGeneratorMode');
+    return stored === 'manual' ? 'manual' : 'auto';
+}
+
+function saveGeneratorMode() {
+    localStorage.setItem('lotteryGeneratorMode', generatorMode);
+}
+
 const ADMIN_PASSWORD = 'admin123';
 let isAdminAuthenticated = false;
+let generatorMode = loadGeneratorMode();
 
 // Initialize today's date with random numbers for all time slots
 function initializeDateWithRandomNumbers(dataStore, date) {
     if (!dataStore[date]) {
         dataStore[date] = {};
+    }
+
+    if (generatorMode !== 'auto') {
+        return;
     }
 
     TIME_SLOTS.forEach((time) => {
@@ -193,6 +207,72 @@ function updateAdminEditLock(date, time) {
     } else {
         resultInput.title = '';
         saveButton.title = '';
+    }
+}
+
+function removeUpcomingAutoResults() {
+    const allData = lotteryData.getAll();
+    let hasChanges = false;
+
+    Object.entries(allData).forEach(([date, timeSlots]) => {
+        Object.keys(timeSlots).forEach((time) => {
+            const key = `${date}|${time}`;
+            const isConfirmed = confirmedNumbers[key] === true;
+            const isUpcoming = !hasSlotPassed(date, time);
+
+            if (isUpcoming && !isConfirmed) {
+                delete timeSlots[time];
+                hasChanges = true;
+            }
+        });
+    });
+
+    if (hasChanges) {
+        lotteryData.saveToStorage();
+    }
+
+    return hasChanges;
+}
+
+function updateGeneratorModeUI() {
+    const modeText = document.getElementById('generatorModeText');
+    const toggleBtn = document.getElementById('toggleGeneratorModeBtn');
+    if (!modeText || !toggleBtn) {
+        return;
+    }
+
+    if (generatorMode === 'auto') {
+        modeText.textContent = 'Current Mode: AUTO';
+        toggleBtn.textContent = 'Switch to Manual';
+        toggleBtn.classList.remove('btn-primary');
+        toggleBtn.classList.add('btn-secondary');
+    } else {
+        modeText.textContent = 'Current Mode: MANUAL';
+        toggleBtn.textContent = 'Switch to Auto';
+        toggleBtn.classList.remove('btn-secondary');
+        toggleBtn.classList.add('btn-primary');
+    }
+}
+
+function toggleGeneratorMode() {
+    generatorMode = generatorMode === 'auto' ? 'manual' : 'auto';
+    saveGeneratorMode();
+
+    if (generatorMode === 'manual') {
+        removeUpcomingAutoResults();
+    } else {
+        const today = new Date().toISOString().split('T')[0];
+        lotteryData.ensureDate(today);
+    }
+
+    updateGeneratorModeUI();
+    autoConfirmPassedSlots();
+    populateStoredDataPreview();
+
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    if (startDate && endDate) {
+        filterResults();
     }
 }
 
@@ -403,6 +483,7 @@ function toggleAdminPanel() {
 
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
+        updateGeneratorModeUI();
         populateTimeSlots();
         populateStoredDataPreview();
         setDefaultAdminDate();
@@ -645,6 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial render with today's data (skeleton table)
     autoConfirmPassedSlots();
     filterResults();
+    updateGeneratorModeUI();
 
     // Start live real-time clock
     updateRealTimeClock();
