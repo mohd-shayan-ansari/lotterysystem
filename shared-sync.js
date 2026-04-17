@@ -6,7 +6,7 @@
     ]);
 
     const SHARED_PREFIXES = ['lotteryRecordData_'];
-    const API_BASE = '/api/state';
+    const API_BASE = 'https://lottery-backend-0myl.onrender.com/api/state';
 
     let initialized = false;
     let hooksInstalled = false;
