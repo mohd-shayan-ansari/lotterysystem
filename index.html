@@ -63,13 +63,27 @@
         }
         
         .show-result-card {
-            padding: 0.7rem;
-            margin-bottom: 1rem;
+            padding: 0.55rem;
+            margin-bottom: 0.85rem;
         }
         
         .show-result-card .section-title {
-            margin-bottom: 0.45rem;
-            padding: 0.5rem 0.7rem;
+            margin-bottom: 0.35rem;
+            padding: 0.45rem 0.65rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 220px)) auto;
+            gap: 0.6rem;
+            justify-content: center;
+            align-items: end;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: end;
         }
         
         .show-result-card .field-label {
@@ -138,11 +152,11 @@
             color: var(--text-main);
             border: 1px solid var(--border-main);
             border-radius: var(--radius-sm);
-            padding: 0.7rem 0.8rem;
+            padding: 0.45rem 0.65rem;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             width: 100%;
-            min-height: 38px;
+            min-height: 34px;
         }
         
         .input-date::placeholder {
@@ -312,6 +326,26 @@
             display: none;
         }
         
+        .footer-fortune {
+            text-align: center;
+        }
+        
+        .copyright-note {
+            margin: 0.35rem 0 0;
+            color: #d0d0d0;
+            font-size: 0.85rem;
+        }
+        
+        .copyright-year-btn {
+            border: 0;
+            background: transparent;
+            color: var(--border-main);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+        
         @media (max-width: 900px) {
             .admin-top {
                 flex-direction: column;
@@ -353,15 +387,12 @@
                 font-size: 1.02rem;
             }
             .filter-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: var(--space-2);
             }
             .filter-actions {
                 grid-column: 1 / -1;
-                display: grid;
-                grid-template-columns: auto auto 1fr;
-                gap: var(--space-1);
-                align-items: center;
+                justify-content: center;
             }
             .results-status-given {
                 color: #57e06d !important;
@@ -377,11 +408,10 @@
             }
             @media (max-width: 640px) {
                 .filter-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
                 }
                 .filter-actions {
-                    grid-column: 1;
-                    grid-template-columns: 1fr 1fr;
+                    grid-column: 1 / -1;
                 }
             }
             .record-count {
@@ -431,23 +461,11 @@
 </head>
 
 <body class="p-4 md:p-6">
-    <!-- Header -->
-    <div class="header rounded-lg mb-6 p-6 shadow-lg">
-        <div class="header-menu">
-            <button id="topMenuBtn" class="menu-btn" onclick="toggleTopMenu()">☰</button>
-            <div id="topMenuDropdown" class="menu-dropdown">
-                <button class="menu-link" onclick="openAdminAuthModal(); closeTopMenu();">Admin Panel</button>
-                <a class="menu-link" href="record.html" onclick="closeTopMenu()">Record Page</a>
-            </div>
+    <div class="header-menu">
+        <button id="topMenuBtn" class="menu-btn" onclick="toggleTopMenu()">☰</button>
+        <div id="topMenuDropdown" class="menu-dropdown">
+            <a class="menu-link" href="record.html" onclick="closeTopMenu()">Record Page</a>
         </div>
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 pr-16 md:pr-20">
-            <h1 class="text-2xl md:text-4xl font-bold leading-tight" style="color: #FFFF00;">🎰 Test Your Fortune</h1>
-            <div class="header-tools flex flex-wrap items-center gap-2 md:gap-3">
-                <div id="liveDate" class="header-clock-box">--/--/----</div>
-                <div id="liveTime" class="header-clock-box">--:--:-- --</div>
-            </div>
-        </div>
-        <p class="text-gray-400 mt-2 header-caption">Check your lucky numbers</p>
     </div>
 
     <!-- Admin Password Modal -->
@@ -508,6 +526,13 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- Bottom Fortune Card -->
+    <div class="header rounded-lg mt-6 p-4 shadow-lg footer-fortune">
+        <h1 class="text-2xl md:text-4xl font-bold leading-tight" style="color: #FFFF00;">🎰 Test Your Fortune</h1>
+        <p class="text-gray-400 mt-1 header-caption">Check your lucky numbers</p>
+        <p class="copyright-note">Copyright <button type="button" class="copyright-year-btn" onclick="openAdminAuthModal()">2026</button></p>
     </div>
 
     <!-- Admin Panel Modal -->
@@ -605,8 +630,20 @@
     <script>
         (function loadAppAfterSharedSync() {
             const startApp = function() {
+                const startInput = document.getElementById('startDate');
+                const endInput = document.getElementById('endDate');
+                if (startInput && endInput) {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const today = `${year}-${month}-${day}`;
+                    startInput.value = today;
+                    endInput.value = today;
+                }
+
                 const appScript = document.createElement('script');
-                appScript.src = 'app.js?v=20260417-05';
+                appScript.src = 'app.js?v=20260417-06';
                 document.body.appendChild(appScript);
             };
 

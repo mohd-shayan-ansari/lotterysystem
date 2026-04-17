@@ -55,8 +55,8 @@ function generateTimeSlots() {
     const slots = [];
     const startHour = 9;
     const startMinute = 0;
-    const endHour = 21;
-    const endMinute = 0;
+    const endHour = 22;
+    const endMinute = 40;
     const interval = 20; // 20 minutes interval
 
     let currentHour = startHour;
@@ -129,11 +129,25 @@ function initializeDateWithRandomNumbers(dataStore, date) {
     if (!dataStore[date]) {
         dataStore[date] = {};
     }
+
+    TIME_SLOTS.forEach((time) => {
+        const existing = getStoredNumber(dataStore, date, time);
+        if (existing && /^[0-9]{2}$/.test(existing.result || '')) {
+            return;
+        }
+
+        const randomValue = generateRandomNumber();
+        dataStore[date][time] = {
+            andar: randomValue.charAt(0),
+            result: randomValue,
+            bahar: randomValue.charAt(1),
+        };
+    });
 }
 
 function hasSlotPassed(date, time) {
     const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
+    const todayStr = getLocalDateKey(now);
 
     if (date < todayStr) {
         return true;
@@ -169,8 +183,38 @@ function formatTimeDisplay(time24) {
     return `${String(hour).padStart(2, '0')}:${minute} ${ampm}`;
 }
 
+function getLocalDateKey(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function parseDateKey(dateKey) {
+    const [year, month, day] = dateKey.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+function applyTodayDateDefaults() {
+    const startInput = document.getElementById('startDate');
+    const endInput = document.getElementById('endDate');
+    if (!startInput || !endInput) {
+        return '';
+    }
+
+    const today = getLocalDateKey();
+    if (!startInput.value) {
+        startInput.value = today;
+    }
+    if (!endInput.value) {
+        endInput.value = today;
+    }
+
+    return today;
+}
+
 function getNextUpcomingTimeForDate(date) {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalDateKey();
     if (date > todayStr) {
         return TIME_SLOTS[0] || '';
     }
@@ -416,13 +460,13 @@ class LotteryData {
     }
 
     ensureDateRange(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        const start = parseDateKey(startDate);
+        const end = parseDateKey(endDate);
         const current = new Date(start);
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = getLocalDateKey();
 
         while (current <= end) {
-            const dateStr = current.toISOString().split('T')[0];
+            const dateStr = getLocalDateKey(current);
             if (dateStr <= todayStr) {
                 initializeDateWithRandomNumbers(this.data, dateStr);
             }
@@ -442,12 +486,12 @@ class LotteryData {
 
     getByDateRange(startDate, endDate) {
         const results = [];
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        const start = parseDateKey(startDate);
+        const end = parseDateKey(endDate);
 
         const current = new Date(start);
         while (current <= end) {
-            const date = current.toISOString().split('T')[0];
+            const date = getLocalDateKey(current);
             TIME_SLOTS.forEach((time) => {
                 const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
@@ -554,20 +598,23 @@ function renderTable(results) {
         const numberCell = document.createElement('td');
         numberCell.setAttribute('data-label', 'Result');
         numberCell.textContent = result.result;
-        const key = `${result.date}|${result.time}`;
-        const isConfirmed = confirmedNumbers[key] === true;
-        if (result.isUpcoming) {
-            numberCell.className = 'table-cell-pending';
-            numberCell.title = 'Upcoming result slot';
-        } else {
-            numberCell.className = 'table-cell-confirmed';
-            finalRowClass = 'table-row-passed';
-        }
-        row.appendChild(numberCell);
 
         const baharCell = document.createElement('td');
         baharCell.setAttribute('data-label', 'Bahar');
         baharCell.textContent = result.bahar;
+
+        if (result.isUpcoming) {
+            andarCell.className = 'table-cell-pending';
+            numberCell.className = 'table-cell-pending';
+            baharCell.className = 'table-cell-pending';
+            numberCell.title = 'Upcoming result slot';
+        } else {
+            andarCell.className = 'table-cell-confirmed';
+            numberCell.className = 'table-cell-confirmed';
+            baharCell.className = 'table-cell-confirmed';
+            finalRowClass = 'table-row-passed';
+        }
+        row.appendChild(numberCell);
         row.appendChild(baharCell);
 
         row.className = finalRowClass;
@@ -580,12 +627,21 @@ function renderTable(results) {
 // ================================
 
 function filterResults() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
+    applyTodayDateDefaults();
+
+    let startDate = document.getElementById('startDate').value;
+    let endDate = document.getElementById('endDate').value;
 
     if (!startDate || !endDate) {
-        alert('Please select both Start Date and End Date');
-        return;
+        const today = getLocalDateKey();
+        if (!startDate) {
+            startDate = today;
+            document.getElementById('startDate').value = today;
+        }
+        if (!endDate) {
+            endDate = today;
+            document.getElementById('endDate').value = today;
+        }
     }
 
     if (startDate > endDate) {
@@ -598,9 +654,10 @@ function filterResults() {
 }
 
 function resetFilter() {
-    document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
-    renderTable([]);
+    const today = getLocalDateKey();
+    document.getElementById('startDate').value = today;
+    document.getElementById('endDate').value = today;
+    filterResults();
 }
 
 // ================================
@@ -717,7 +774,7 @@ function updateRealTimeClock() {
 }
 
 function setDefaultAdminDate() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateKey();
     const dateInput = document.getElementById('adminDate');
     if (dateInput) {
         dateInput.value = today;
@@ -860,7 +917,7 @@ function deleteStoredResult(date, time) {
 // INITIALIZATION
 // ================================
 
-document.addEventListener('DOMContentLoaded', function() {
+function initializeDashboard() {
     document.addEventListener('click', function(event) {
         const dropdown = document.getElementById('topMenuDropdown');
         const menuBtn = document.getElementById('topMenuBtn');
@@ -874,7 +931,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Set default date range to today
-    const today = new Date().toISOString().split('T')[0];
+    const today = applyTodayDateDefaults() || getLocalDateKey();
     lotteryData.ensureDate(today);
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
@@ -896,4 +953,10 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🎰 Play Bhag Laxmi Dashboard Initialized');
     console.log('Available time slots:', TIME_SLOTS);
     console.log('Today\'s skeleton data generated with random numbers');
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDashboard);
+} else {
+    initializeDashboard();
+}
