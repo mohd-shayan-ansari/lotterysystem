@@ -169,6 +169,45 @@ function formatTimeDisplay(time24) {
     return `${String(hour).padStart(2, '0')}:${minute} ${ampm}`;
 }
 
+function getNextUpcomingTimeForDate(date) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (date > todayStr) {
+        return TIME_SLOTS[0] || '';
+    }
+
+    const now = new Date();
+    for (const time of TIME_SLOTS) {
+        if (date < todayStr) {
+            return time;
+        }
+
+        const [hours, minutes] = time.split(':').map(Number);
+        const slotDateTime = new Date(now);
+        slotDateTime.setHours(hours, minutes, 0, 0);
+        if (slotDateTime > now) {
+            return time;
+        }
+    }
+
+    return TIME_SLOTS[TIME_SLOTS.length - 1] || '';
+}
+
+function syncAdminTimeToDate() {
+    const dateInput = document.getElementById('adminDate');
+    const timeInput = document.getElementById('adminTime');
+    if (!dateInput || !timeInput) {
+        return;
+    }
+
+    const date = dateInput.value;
+    if (!date) {
+        timeInput.value = '';
+        return;
+    }
+
+    timeInput.value = getNextUpcomingTimeForDate(date);
+}
+
 function getStoredNumber(dataStore, date, time) {
     if (!dataStore[date] || !dataStore[date][time]) {
         return null;
@@ -223,21 +262,17 @@ function autoConfirmPassedSlots() {
 
 function updateAdminEditLock(date, time) {
     const resultInput = document.getElementById('result');
-    const saveButton = document.getElementById('adminSaveBtn');
-    if (!resultInput || !saveButton) {
+    if (!resultInput) {
         return;
     }
 
     const isLocked = Boolean(date && time && hasSlotPassed(date, time));
     resultInput.disabled = isLocked;
-    saveButton.disabled = isLocked;
 
     if (isLocked) {
         resultInput.title = 'Past slot is locked and cannot be edited';
-        saveButton.title = 'Past slot is locked and cannot be edited';
     } else {
         resultInput.title = '';
-        saveButton.title = '';
     }
 }
 
@@ -412,9 +447,9 @@ class LotteryData {
             TIME_SLOTS.forEach((time) => {
                 const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
-                const andarToShow = isUpcoming ? 'Pending' : (storedSlot ? .andar || '--');
-                const resultToShow = isUpcoming ? 'Pending' : (storedSlot ? .result || '--');
-                const baharToShow = isUpcoming ? 'Pending' : (storedSlot ? .bahar || '--');
+                const andarToShow = isUpcoming ? 'Pending' : (storedSlot?.andar || '--');
+                const resultToShow = isUpcoming ? 'Pending' : (storedSlot?.result || '--');
+                const baharToShow = isUpcoming ? 'Pending' : (storedSlot?.bahar || '--');
 
                 results.push({
                     date,
@@ -499,18 +534,22 @@ function renderTable(results) {
         row.className = rowClass;
 
         const dateCell = document.createElement('td');
+        dateCell.setAttribute('data-label', 'Date');
         dateCell.textContent = formatDateDisplay(result.date);
         row.appendChild(dateCell);
 
         const timeCell = document.createElement('td');
+        timeCell.setAttribute('data-label', 'Time');
         timeCell.textContent = formatTimeDisplay(result.time);
         row.appendChild(timeCell);
 
         const andarCell = document.createElement('td');
+        andarCell.setAttribute('data-label', 'Andar');
         andarCell.textContent = result.andar;
         row.appendChild(andarCell);
 
         const numberCell = document.createElement('td');
+        numberCell.setAttribute('data-label', 'Result');
         numberCell.textContent = result.result;
         const key = `${result.date}|${result.time}`;
         const isConfirmed = confirmedNumbers[key] === true;
@@ -524,6 +563,7 @@ function renderTable(results) {
         row.appendChild(numberCell);
 
         const baharCell = document.createElement('td');
+        baharCell.setAttribute('data-label', 'Bahar');
         baharCell.textContent = result.bahar;
         row.appendChild(baharCell);
 
@@ -587,7 +627,6 @@ function toggleAdminPanel() {
     if (modal.classList.contains('active')) {
         renderUsersList();
         closeAdminMenu();
-        populateTimeSlots();
         populateStoredDataPreview();
         setDefaultAdminDate();
     } else {
@@ -687,41 +726,10 @@ function setDefaultAdminDate() {
     if (dateInput) {
         dateInput.value = today;
     }
-    updateAdminEditLock(today, '');
-}
-
-function populateTimeSlots() {
-    const select = document.getElementById('adminTime');
-    if (!select) {
-        console.error('Admin time select element not found!');
-        return;
-    }
-    select.innerHTML = '<option value="">Select Time</option>';
-    TIME_SLOTS.forEach(time => {
-        const option = document.createElement('option');
-        option.value = time;
-        option.textContent = formatTimeDisplay(time);
-        select.appendChild(option);
-    });
-}
-
-function loadAdminData() {
-    const date = document.getElementById('adminDate').value;
-    const time = document.getElementById('adminTime').value;
-
-    if (!date || !time) {
-        alert('Please select both Date and Time');
-        return;
-    }
-
-    const slot = lotteryData.getResult(date, time);
-
-    updateAdminEditLock(date, time);
-
-    if (slot) {
-        document.getElementById('result').value = slot.result === '--' ? '' : slot.result;
-    } else {
-        document.getElementById('result').value = '';
+    syncAdminTimeToDate();
+    const timeInput = document.getElementById('adminTime');
+    if (timeInput && dateInput?.value) {
+        updateAdminEditLock(dateInput.value, timeInput.value);
     }
 }
 
@@ -730,7 +738,7 @@ function saveAdminData() {
     const time = document.getElementById('adminTime').value;
 
     if (!date || !time) {
-        alert('Please select both Date and Time');
+        alert('Please choose a valid date and time');
         return;
     }
 

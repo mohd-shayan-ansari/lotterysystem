@@ -6,176 +6,371 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lottery Record Page</title>
     <style>
+         :root {
+            --bg-main: #f0dc2e;
+            --bg-card: #111;
+            --bg-card-soft: #222;
+            --bg-card-muted: #2d2d2d;
+            --border-main: #f5df21;
+            --text-main: #f8e93f;
+            --text-dark: #151515;
+            --text-soft: #ffdf64;
+            --text-muted: #c0c0c0;
+            --danger: #ff8787;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --space-1: 0.5rem;
+            --space-2: 0.75rem;
+            --space-3: 1rem;
+            --space-4: 1.25rem;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #FFFF00;
-            color: #FFFF00;
-            padding: 12px;
+            background: var(--bg-main);
+            color: var(--text-main);
+            padding: clamp(0.65rem, 2vw, 1rem);
+            line-height: 1.45;
         }
-
+        
         .card {
-            background: #111;
-            border: 2px solid #FFFF00;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 14px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-main);
+            border-radius: var(--radius-md);
+            padding: clamp(0.9rem, 2vw, 1.2rem);
+            margin-bottom: var(--space-3);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
         }
-
+        
         .title {
-            margin: 0 0 10px;
-            font-size: 24px;
-            color: #FFFF00;
+            margin: 0 0 var(--space-2);
+            font-size: clamp(1.2rem, 3.2vw, 1.8rem);
+            color: var(--text-main);
+            font-weight: 800;
         }
-
-        .input {
+        
+        .input,
+        .record-input {
             width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-            border: 1px solid #FFFF00;
-            border-radius: 6px;
-            background: #222;
-            color: #FFFF00;
-            margin-bottom: 10px;
-            font-weight: bold;
+            padding: 0.68rem 0.72rem;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+            margin-bottom: var(--space-2);
+            font-weight: 700;
+            min-height: 44px;
+            font-size: clamp(0.86rem, 2.1vw, 0.95rem);
         }
-
+        
         .btn {
-            padding: 10px 14px;
-            border: 1px solid #FFFF00;
-            border-radius: 6px;
-            background: #FFFF00;
-            color: #111;
-            font-weight: bold;
+            min-height: 44px;
+            padding: 0.625rem 0.95rem;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            background: var(--border-main);
+            color: var(--text-dark);
+            font-weight: 800;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
         }
-
+        
         .btn-secondary {
             background: #333;
-            color: #FFFF00;
+            color: var(--text-main);
         }
-
+        
+        .tab-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-1);
+            margin-bottom: var(--space-2);
+        }
+        
+        .tab-btn {
+            min-height: 44px;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            background: #222;
+            color: var(--text-main);
+            font-weight: 800;
+            cursor: pointer;
+        }
+        
+        .tab-btn.active {
+            background: var(--border-main);
+            color: var(--text-dark);
+        }
+        
+        .admin-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: var(--space-1);
+            margin-bottom: var(--space-2);
+        }
+        
+        .admin-user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-1);
+            margin-bottom: var(--space-2);
+        }
+        
+        .user-chip {
+            min-height: 44px;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            background: #222;
+            color: var(--text-main);
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+        }
+        
+        .user-chip.active {
+            background: var(--border-main);
+            color: var(--text-dark);
+        }
+        
+        .admin-table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+        }
+        
+        .admin-table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th,
+        .admin-table td {
+            border: 1px solid var(--border-main);
+            padding: 0.6rem 0.5rem;
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--text-main);
+        }
+        
+        .admin-table th {
+            background: var(--bg-card-muted);
+        }
+        
+        .admin-empty {
+            color: var(--text-soft);
+            font-weight: 700;
+            padding: 0.75rem;
+        }
+        
         .row-actions {
             display: flex;
-            gap: 8px;
+            gap: var(--space-1);
             flex-wrap: wrap;
         }
-
+        
         .hidden {
             display: none;
         }
-
+        
         .hint {
-            color: #FFDD66;
-            font-size: 12px;
+            color: var(--text-soft);
+            font-size: clamp(0.78rem, 2vw, 0.85rem);
         }
-
+        
         .error {
-            color: #ff7777;
-            margin-top: 8px;
+            color: var(--danger);
+            margin-top: var(--space-1);
+            font-weight: 600;
         }
-
+        
         .records-scroll {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            border: 1px solid #FFFF00;
-            border-radius: 8px;
+            border: 1px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
         }
-
+        
         .records-grid {
-            min-width: 760px;
+            width: 100%;
         }
-
+        
         .records-header,
         .records-row {
             display: grid;
-            grid-template-columns: 120px 110px repeat(4, minmax(110px, 1fr));
-            gap: 8px;
+            grid-template-columns: 130px 120px repeat(4, minmax(0, 1fr));
+            gap: var(--space-1);
             align-items: center;
-            padding: 8px;
+            padding: var(--space-2);
             border-bottom: 1px solid #444;
         }
-
+        
         .records-header {
-            background: #2d2d2d;
-            font-weight: bold;
-            color: #FFFF00;
+            background: var(--bg-card-muted);
+            font-weight: 700;
+            color: var(--text-main);
         }
-
+        
         .records-row:nth-child(odd) {
-            background: #161616;
+            background: #181818;
         }
-
+        
         .records-cell {
-            font-size: 13px;
-            font-weight: bold;
-            color: #FFFF00;
+            font-size: clamp(0.8rem, 1.3vw, 0.92rem);
+            font-weight: 700;
+            color: var(--text-main);
             text-align: center;
         }
-
+        
         .record-input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 8px;
-            border: 1px solid #FFFF00;
-            border-radius: 6px;
-            background: #222;
-            color: #FFFF00;
-            font-weight: bold;
+            margin-bottom: 0;
             text-align: center;
         }
-
-        @media (max-width: 768px) {
-            .title {
-                font-size: 20px;
-            }
-
-            .records-grid {
-                min-width: 690px;
-            }
-
+        
+        .record-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        
+        .record-label {
+            display: none;
+        }
+        
+        @media (max-width: 860px) {
             .records-header,
             .records-row {
-                grid-template-columns: 105px 95px repeat(4, minmax(95px, 1fr));
-                gap: 6px;
-                padding: 6px;
+                grid-template-columns: 110px 104px repeat(4, minmax(0, 1fr));
+                padding: 0.55rem;
             }
-
-            .records-cell {
-                font-size: 12px;
+        }
+        
+        @media (max-width: 680px) {
+            .records-scroll {
+                border: 0;
+                border-radius: 0;
+                overflow: visible;
             }
-
-            .record-input {
-                padding: 7px;
-                font-size: 12px;
+            .records-header {
+                display: none;
+            }
+            .records-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: var(--space-1);
+                border: 1px solid var(--border-main);
+                border-radius: var(--radius-sm);
+                margin-bottom: var(--space-2);
+                padding: var(--space-2);
+            }
+            .records-row .records-cell {
+                display: flex;
+                justify-content: space-between;
+                text-align: left;
+                border-bottom: 1px solid rgba(245, 223, 33, 0.25);
+                padding-bottom: 0.35rem;
+            }
+            .records-row .records-cell::before {
+                content: attr(data-label);
+                color: var(--text-soft);
+                font-weight: 700;
+            }
+            .record-label {
+                display: block;
+                color: var(--text-soft);
+                font-size: 0.84rem;
+                font-weight: 700;
+            }
+            .row-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: var(--space-1);
+            }
+            .records-top {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: var(--space-2);
+                align-items: stretch;
             }
         }
     </style>
 </head>
 
 <body>
-    <div id="loginCard" class="card">
-        <h2 class="title">Record Page Login</h2>
-        <input id="loginUser" class="input" type="text" placeholder="Username (counter1/counter2/counter3)">
-        <input id="loginPass" class="input" type="password" placeholder="Password">
-        <div class="row-actions">
-            <button class="btn" onclick="loginRecordUser()">Login</button>
-            <a class="btn btn-secondary" href="index.html">Back to Dashboard</a>
+    <div class="card">
+        <div class="tab-switch">
+            <button id="userTabBtn" class="tab-btn active" onclick="showLoginMode('user')">User Login</button>
+            <button id="adminTabBtn" class="tab-btn" onclick="showLoginMode('admin')">Admin Login</button>
         </div>
-        <p class="hint">Default users: counter1/counter1, counter2/counter2, counter3/counter3</p>
-        <p id="loginMsg" class="error"></p>
+
+        <div id="loginCard">
+            <div id="userLoginCard">
+                <h2 class="title">Record Page Login</h2>
+                <input id="loginUser" class="input" type="text" placeholder="Username (counter1/counter2/counter3)">
+                <input id="loginPass" class="input" type="password" placeholder="Password">
+                <div class="row-actions">
+                    <button class="btn" onclick="loginRecordUser()">Login</button>
+                    <a class="btn btn-secondary" href="index.html">Back to Dashboard</a>
+                </div>
+                <p class="hint">Default users: counter1/counter1, counter2/counter2, counter3/counter3</p>
+            </div>
+
+            <div id="adminLoginCard" class="hidden">
+                <h2 class="title">Admin Access</h2>
+                <input id="adminLoginUser" class="input" type="text" placeholder="Admin username">
+                <input id="adminLoginPass" class="input" type="password" placeholder="Admin password">
+                <div class="row-actions">
+                    <button class="btn" onclick="loginAdminUser()">Login as Admin</button>
+                    <a class="btn btn-secondary" href="index.html">Back to Dashboard</a>
+                </div>
+                <p class="hint">Admin can view every user's submitted record data.</p>
+            </div>
+
+            <p id="loginMsg" class="error"></p>
+        </div>
     </div>
 
     <div id="recordsSection" class="card hidden">
-        <div class="row-actions" style="justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="row-actions records-top" style="justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h2 class="title" style="margin: 0;">Record Page</h2>
             <div class="row-actions">
-                <button class="btn" onclick="saveRecordInputs()">Save Record Data</button>
+                <button id="adminRefreshBtn" class="btn btn-secondary hidden" onclick="renderAdminDashboard()">Refresh Users</button>
+                <button id="recordSaveBtn" class="btn" onclick="saveRecordInputs()">Save Record Data</button>
                 <button class="btn btn-secondary" onclick="logoutRecordUser()">Logout</button>
             </div>
         </div>
 
         <p id="welcomeText" class="hint"></p>
+
+        <div id="adminDashboard" class="hidden">
+            <div class="admin-summary" id="adminSummary"></div>
+            <div class="admin-user-list" id="adminUserList"></div>
+            <div class="admin-table-scroll">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Block 1</th>
+                            <th>Block 2</th>
+                            <th>Block 3</th>
+                            <th>Block 4</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminRecordRows"></tbody>
+                </table>
+            </div>
+            <p class="hint" style="margin-top: 10px;">Select a user above to inspect their saved entries.</p>
+        </div>
 
         <div class="records-scroll">
             <div class="records-grid">
@@ -229,6 +424,26 @@
             return {};
         }
 
+        function getAdminPassword() {
+            return 'admin123';
+        }
+
+        function showLoginMode(mode) {
+            const userCard = document.getElementById('userLoginCard');
+            const adminCard = document.getElementById('adminLoginCard');
+            const userTabBtn = document.getElementById('userTabBtn');
+            const adminTabBtn = document.getElementById('adminTabBtn');
+            const msg = document.getElementById('loginMsg');
+
+            if (msg) msg.textContent = '';
+
+            const isAdmin = mode === 'admin';
+            userCard.classList.toggle('hidden', isAdmin);
+            adminCard.classList.toggle('hidden', !isAdmin);
+            userTabBtn.classList.toggle('active', !isAdmin);
+            adminTabBtn.classList.toggle('active', isAdmin);
+        }
+
         function getSortedResultRows() {
             const raw = localStorage.getItem('lotteryResults');
             const data = raw ? JSON.parse(raw) : {};
@@ -236,7 +451,11 @@
 
             Object.entries(data).forEach(([date, timeSlots]) => {
                 Object.keys(timeSlots).forEach((time) => {
-                    rows.push({ date, time, key: `${date}|${time}` });
+                    rows.push({
+                        date,
+                        time,
+                        key: `${date}|${time}`
+                    });
                 });
             });
 
@@ -247,6 +466,13 @@
             });
 
             return rows;
+        }
+
+        function getSortedUserDataKeys() {
+            return Object.keys(localStorage)
+                .filter((key) => key.startsWith('lotteryRecordData_'))
+                .map((key) => key.replace('lotteryRecordData_', ''))
+                .sort();
         }
 
         function getUserRecords(username) {
@@ -268,32 +494,102 @@
             localStorage.setItem(key, JSON.stringify(data));
         }
 
+        function renderAdminDashboard(selectedUser) {
+            const adminDashboard = document.getElementById('adminDashboard');
+            const adminSummary = document.getElementById('adminSummary');
+            const adminUserList = document.getElementById('adminUserList');
+            const adminRecordRows = document.getElementById('adminRecordRows');
+            if (!adminDashboard || !adminSummary || !adminUserList || !adminRecordRows) {
+                return;
+            }
+
+            const users = getSortedUserDataKeys();
+            const selected = selectedUser || users[0] || '';
+
+            adminDashboard.classList.remove('hidden');
+            adminSummary.innerHTML = `
+                <div class="card" style="margin:0; padding:0.8rem;">
+                    <div class="hint">Total users with saved data</div>
+                    <div class="title" style="margin:0; font-size:1.35rem;">${users.length}</div>
+                </div>
+                <div class="card" style="margin:0; padding:0.8rem;">
+                    <div class="hint">Selected user</div>
+                    <div class="title" style="margin:0; font-size:1.35rem;">${selected || 'None'}</div>
+                </div>
+            `;
+
+            if (users.length === 0) {
+                adminUserList.innerHTML = '<div class="admin-empty">No user records available yet.</div>';
+                adminRecordRows.innerHTML = '';
+                return;
+            }
+
+            adminUserList.innerHTML = users.map((user) => {
+                const recordCount = Object.keys(getUserRecords(user)).length;
+                const activeClass = user === selected ? 'active' : '';
+                return `<button class="user-chip ${activeClass}" onclick="renderAdminDashboard('${user}')">${user} (${recordCount})</button>`;
+            }).join('');
+
+            const selectedData = getUserRecords(selected);
+            const rows = getSortedResultRows();
+            const selectedRows = rows.filter((row) => Boolean(selectedData[row.key]));
+
+            if (selectedRows.length === 0) {
+                adminRecordRows.innerHTML = '<tr><td colspan="6" class="admin-empty">This user has not entered any data yet.</td></tr>';
+                return;
+            }
+
+            adminRecordRows.innerHTML = selectedRows.map((row) => {
+                const record = selectedData[row.key] || {
+                    f1: '',
+                    f2: '',
+                    f3: '',
+                    f4: ''
+                };
+                return `
+                    <tr>
+                        <td>${formatDateDisplay(row.date)}</td>
+                        <td>${formatTimeDisplay(row.time)}</td>
+                        <td>${record.f1 || '-'}</td>
+                        <td>${record.f2 || '-'}</td>
+                        <td>${record.f3 || '-'}</td>
+                        <td>${record.f4 || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function renderRecordRows(username) {
             const rowsHost = document.getElementById('recordRows');
             const rows = getSortedResultRows();
             const userRecords = getUserRecords(username);
 
             if (rows.length === 0) {
-                rowsHost.innerHTML = '<div class="records-row"><div class="records-cell" style="grid-column:1 / span 6;">No result rows available yet.</div></div>';
+                rowsHost.innerHTML = '<div class="records-row"><div class="records-cell" data-label="Status">No result rows available yet.</div></div>';
                 return;
             }
 
             rowsHost.innerHTML = rows.map((row) => {
-                const record = userRecords[row.key] || { f1: '', f2: '', f3: '', f4: '' };
-                return `<div class="records-row">`
-                    + `<div class="records-cell">${formatDateDisplay(row.date)}</div>`
-                    + `<div class="records-cell">${formatTimeDisplay(row.time)}</div>`
-                    + `<input class="record-input" data-key="${row.key}" data-field="f1" maxlength="20" value="${record.f1 || ''}" placeholder="...">`
-                    + `<input class="record-input" data-key="${row.key}" data-field="f2" maxlength="20" value="${record.f2 || ''}" placeholder="...">`
-                    + `<input class="record-input" data-key="${row.key}" data-field="f3" maxlength="20" value="${record.f3 || ''}" placeholder="...">`
-                    + `<input class="record-input" data-key="${row.key}" data-field="f4" maxlength="20" value="${record.f4 || ''}" placeholder="...">`
-                    + `</div>`;
+                const record = userRecords[row.key] || {
+                    f1: '',
+                    f2: '',
+                    f3: '',
+                    f4: ''
+                };
+                return `<div class="records-row">` +
+                    `<div class="records-cell" data-label="Date">${formatDateDisplay(row.date)}</div>` +
+                    `<div class="records-cell" data-label="Time">${formatTimeDisplay(row.time)}</div>` +
+                    `<div class="record-field"><span class="record-label">Block 1</span><input class="record-input" data-key="${row.key}" data-field="f1" maxlength="20" value="${record.f1 || ''}" placeholder="..."></div>` +
+                    `<div class="record-field"><span class="record-label">Block 2</span><input class="record-input" data-key="${row.key}" data-field="f2" maxlength="20" value="${record.f2 || ''}" placeholder="..."></div>` +
+                    `<div class="record-field"><span class="record-label">Block 3</span><input class="record-input" data-key="${row.key}" data-field="f3" maxlength="20" value="${record.f3 || ''}" placeholder="..."></div>` +
+                    `<div class="record-field"><span class="record-label">Block 4</span><input class="record-input" data-key="${row.key}" data-field="f4" maxlength="20" value="${record.f4 || ''}" placeholder="..."></div>` +
+                    `</div>`;
             }).join('');
         }
 
         function saveRecordInputs() {
             const username = localStorage.getItem('lotteryRecordSessionUser');
-            if (!username) return;
+            if (!username || username === 'admin') return;
 
             const inputs = document.querySelectorAll('.record-input');
             const payload = {};
@@ -302,7 +598,12 @@
                 const key = input.getAttribute('data-key');
                 const field = input.getAttribute('data-field');
                 if (!payload[key]) {
-                    payload[key] = { f1: '', f2: '', f3: '', f4: '' };
+                    payload[key] = {
+                        f1: '',
+                        f2: '',
+                        f3: '',
+                        f4: ''
+                    };
                 }
                 payload[key][field] = input.value.trim();
             });
@@ -324,17 +625,47 @@
 
             localStorage.setItem('lotteryRecordSessionUser', username);
             msg.textContent = '';
-            showRecords(username);
+            showRecords(username, false);
         }
 
-        function showRecords(username) {
+        function loginAdminUser() {
+            const username = document.getElementById('adminLoginUser').value.trim();
+            const password = document.getElementById('adminLoginPass').value.trim();
+            const msg = document.getElementById('loginMsg');
+
+            if (username !== 'admin' || password !== getAdminPassword()) {
+                msg.textContent = 'Invalid admin username or password.';
+                return;
+            }
+
+            localStorage.setItem('lotteryRecordSessionUser', 'admin');
+            msg.textContent = '';
+            showRecords('admin', true);
+        }
+
+        function showRecords(username, isAdmin) {
             const loginCard = document.getElementById('loginCard');
             const recordsSection = document.getElementById('recordsSection');
+            const adminRefreshBtn = document.getElementById('adminRefreshBtn');
+            const adminDashboard = document.getElementById('adminDashboard');
+            const recordSaveBtn = document.getElementById('recordSaveBtn');
             loginCard.classList.add('hidden');
             recordsSection.classList.remove('hidden');
 
-            document.getElementById('welcomeText').textContent = `Logged in as ${username}`;
-            renderRecordRows(username);
+            document.getElementById('welcomeText').textContent = isAdmin ? 'Logged in as admin' : `Logged in as ${username}`;
+            if (isAdmin) {
+                adminRefreshBtn.classList.remove('hidden');
+                recordSaveBtn.classList.add('hidden');
+                renderAdminDashboard();
+                adminDashboard.classList.remove('hidden');
+                document.querySelector('.records-scroll').classList.add('hidden');
+            } else {
+                adminRefreshBtn.classList.add('hidden');
+                recordSaveBtn.classList.remove('hidden');
+                adminDashboard.classList.add('hidden');
+                document.querySelector('.records-scroll').classList.remove('hidden');
+                renderRecordRows(username);
+            }
         }
 
         function logoutRecordUser() {
@@ -345,7 +676,9 @@
         (function init() {
             const sessionUser = localStorage.getItem('lotteryRecordSessionUser');
             if (sessionUser) {
-                showRecords(sessionUser);
+                showRecords(sessionUser, sessionUser === 'admin');
+            } else {
+                showLoginMode('user');
             }
         })();
     </script>
