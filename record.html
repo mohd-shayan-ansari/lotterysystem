@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottery Record Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #FFFF00;
+            color: #FFFF00;
+            padding: 12px;
+        }
+
+        .card {
+            background: #111;
+            border: 2px solid #FFFF00;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .title {
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: #FFFF00;
+        }
+
+        .input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #FFFF00;
+            border-radius: 6px;
+            background: #222;
+            color: #FFFF00;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border: 1px solid #FFFF00;
+            border-radius: 6px;
+            background: #FFFF00;
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #FFFF00;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .hint {
+            color: #FFDD66;
+            font-size: 12px;
+        }
+
+        .error {
+            color: #ff7777;
+            margin-top: 8px;
+        }
+
+        .records-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid #FFFF00;
+            border-radius: 8px;
+        }
+
+        .records-grid {
+            min-width: 760px;
+        }
+
+        .records-header,
+        .records-row {
+            display: grid;
+            grid-template-columns: 120px 110px repeat(4, minmax(110px, 1fr));
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #444;
+        }
+
+        .records-header {
+            background: #2d2d2d;
+            font-weight: bold;
+            color: #FFFF00;
+        }
+
+        .records-row:nth-child(odd) {
+            background: #161616;
+        }
+
+        .records-cell {
+            font-size: 13px;
+            font-weight: bold;
+            color: #FFFF00;
+            text-align: center;
+        }
+
+        .record-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #FFFF00;
+            border-radius: 6px;
+            background: #222;
+            color: #FFFF00;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 20px;
+            }
+
+            .records-grid {
+                min-width: 690px;
+            }
+
+            .records-header,
+            .records-row {
+                grid-template-columns: 105px 95px repeat(4, minmax(95px, 1fr));
+                gap: 6px;
+                padding: 6px;
+            }
+
+            .records-cell {
+                font-size: 12px;
+            }
+
+            .record-input {
+                padding: 7px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loginCard" class="card">
+        <h2 class="title">Record Page Login</h2>
+        <input id="loginUser" class="input" type="text" placeholder="Username (counter1/counter2/counter3)">
+        <input id="loginPass" class="input" type="password" placeholder="Password">
+        <div class="row-actions">
+            <button class="btn" onclick="loginRecordUser()">Login</button>
+            <a class="btn btn-secondary" href="index.html">Back to Dashboard</a>
+        </div>
+        <p class="hint">Default users: counter1/counter1, counter2/counter2, counter3/counter3</p>
+        <p id="loginMsg" class="error"></p>
+    </div>
+
+    <div id="recordsSection" class="card hidden">
+        <div class="row-actions" style="justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 class="title" style="margin: 0;">Record Page</h2>
+            <div class="row-actions">
+                <button class="btn" onclick="saveRecordInputs()">Save Record Data</button>
+                <button class="btn btn-secondary" onclick="logoutRecordUser()">Logout</button>
+            </div>
+        </div>
+
+        <p id="welcomeText" class="hint"></p>
+
+        <div class="records-scroll">
+            <div class="records-grid">
+                <div class="records-header">
+                    <div class="records-cell">Date</div>
+                    <div class="records-cell">Time</div>
+                    <div class="records-cell">Block 1</div>
+                    <div class="records-cell">Block 2</div>
+                    <div class="records-cell">Block 3</div>
+                    <div class="records-cell">Block 4</div>
+                </div>
+                <div id="recordRows"></div>
+            </div>
+        </div>
+
+        <p class="hint" style="margin-top: 10px;">Layout: Date (left), Time (next), then 4 editable blocks on right.</p>
+    </div>
+
+    <script>
+        function formatDateDisplay(dateString) {
+            const parts = dateString.split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateString;
+        }
+
+        function formatTimeDisplay(time24) {
+            const parts = time24.split(':');
+            if (parts.length !== 2) return time24;
+            let hour = Number(parts[0]);
+            const minute = parts[1];
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            if (hour === 0) hour = 12;
+            return `${String(hour).padStart(2, '0')}:${minute} ${ampm}`;
+        }
+
+        function getRecordUsers() {
+            const stored = localStorage.getItem('lotteryRecordUsers');
+            if (!stored) {
+                return {
+                    counter1: 'counter1',
+                    counter2: 'counter2',
+                    counter3: 'counter3',
+                };
+            }
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed && typeof parsed === 'object') return parsed;
+            } catch (e) {
+                console.error(e);
+            }
+            return {};
+        }
+
+        function getSortedResultRows() {
+            const raw = localStorage.getItem('lotteryResults');
+            const data = raw ? JSON.parse(raw) : {};
+            const rows = [];
+
+            Object.entries(data).forEach(([date, timeSlots]) => {
+                Object.keys(timeSlots).forEach((time) => {
+                    rows.push({ date, time, key: `${date}|${time}` });
+                });
+            });
+
+            rows.sort((a, b) => {
+                const d = a.date.localeCompare(b.date);
+                if (d !== 0) return d;
+                return a.time.localeCompare(b.time);
+            });
+
+            return rows;
+        }
+
+        function getUserRecords(username) {
+            const key = `lotteryRecordData_${username}`;
+            const raw = localStorage.getItem(key);
+            if (!raw) return {};
+
+            try {
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                console.error(e);
+                return {};
+            }
+        }
+
+        function saveUserRecords(username, data) {
+            const key = `lotteryRecordData_${username}`;
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function renderRecordRows(username) {
+            const rowsHost = document.getElementById('recordRows');
+            const rows = getSortedResultRows();
+            const userRecords = getUserRecords(username);
+
+            if (rows.length === 0) {
+                rowsHost.innerHTML = '<div class="records-row"><div class="records-cell" style="grid-column:1 / span 6;">No result rows available yet.</div></div>';
+                return;
+            }
+
+            rowsHost.innerHTML = rows.map((row) => {
+                const record = userRecords[row.key] || { f1: '', f2: '', f3: '', f4: '' };
+                return `<div class="records-row">`
+                    + `<div class="records-cell">${formatDateDisplay(row.date)}</div>`
+                    + `<div class="records-cell">${formatTimeDisplay(row.time)}</div>`
+                    + `<input class="record-input" data-key="${row.key}" data-field="f1" maxlength="20" value="${record.f1 || ''}" placeholder="...">`
+                    + `<input class="record-input" data-key="${row.key}" data-field="f2" maxlength="20" value="${record.f2 || ''}" placeholder="...">`
+                    + `<input class="record-input" data-key="${row.key}" data-field="f3" maxlength="20" value="${record.f3 || ''}" placeholder="...">`
+                    + `<input class="record-input" data-key="${row.key}" data-field="f4" maxlength="20" value="${record.f4 || ''}" placeholder="...">`
+                    + `</div>`;
+            }).join('');
+        }
+
+        function saveRecordInputs() {
+            const username = localStorage.getItem('lotteryRecordSessionUser');
+            if (!username) return;
+
+            const inputs = document.querySelectorAll('.record-input');
+            const payload = {};
+
+            inputs.forEach((input) => {
+                const key = input.getAttribute('data-key');
+                const field = input.getAttribute('data-field');
+                if (!payload[key]) {
+                    payload[key] = { f1: '', f2: '', f3: '', f4: '' };
+                }
+                payload[key][field] = input.value.trim();
+            });
+
+            saveUserRecords(username, payload);
+            alert('Record page data saved successfully.');
+        }
+
+        function loginRecordUser() {
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+            const msg = document.getElementById('loginMsg');
+            const users = getRecordUsers();
+
+            if (!users[username] || users[username] !== password) {
+                msg.textContent = 'Invalid username or password.';
+                return;
+            }
+
+            localStorage.setItem('lotteryRecordSessionUser', username);
+            msg.textContent = '';
+            showRecords(username);
+        }
+
+        function showRecords(username) {
+            const loginCard = document.getElementById('loginCard');
+            const recordsSection = document.getElementById('recordsSection');
+            loginCard.classList.add('hidden');
+            recordsSection.classList.remove('hidden');
+
+            document.getElementById('welcomeText').textContent = `Logged in as ${username}`;
+            renderRecordRows(username);
+        }
+
+        function logoutRecordUser() {
+            localStorage.removeItem('lotteryRecordSessionUser');
+            window.location.reload();
+        }
+
+        (function init() {
+            const sessionUser = localStorage.getItem('lotteryRecordSessionUser');
+            if (sessionUser) {
+                showRecords(sessionUser);
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -90,34 +90,45 @@ function saveConfirmedNumbers() {
     localStorage.setItem('lotteryConfirmedResults', JSON.stringify(confirmedNumbers));
 }
 
-function loadGeneratorMode() {
-    const stored = localStorage.getItem('lotteryGeneratorMode');
-    return stored === 'manual' ? 'manual' : 'auto';
+function loadRecordUsers() {
+    const stored = localStorage.getItem('lotteryRecordUsers');
+    if (!stored) {
+        return {
+            counter1: 'counter1',
+            counter2: 'counter2',
+            counter3: 'counter3',
+        };
+    }
+
+    try {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object') {
+            return parsed;
+        }
+    } catch (error) {
+        console.error('Failed to parse lotteryRecordUsers, resetting defaults.', error);
+    }
+
+    return {
+        counter1: 'counter1',
+        counter2: 'counter2',
+        counter3: 'counter3',
+    };
 }
 
-function saveGeneratorMode() {
-    localStorage.setItem('lotteryGeneratorMode', generatorMode);
+function saveRecordUsers() {
+    localStorage.setItem('lotteryRecordUsers', JSON.stringify(recordUsers));
 }
 
 const ADMIN_PASSWORD = 'admin123';
 let isAdminAuthenticated = false;
-let generatorMode = loadGeneratorMode();
+const recordUsers = loadRecordUsers();
 
 // Initialize today's date with random numbers for all time slots
 function initializeDateWithRandomNumbers(dataStore, date) {
     if (!dataStore[date]) {
         dataStore[date] = {};
     }
-
-    if (generatorMode !== 'auto') {
-        return;
-    }
-
-    TIME_SLOTS.forEach((time) => {
-        if (!dataStore[date][time]) {
-            dataStore[date][time] = generateRandomNumber();
-        }
-    });
 }
 
 function hasSlotPassed(date, time) {
@@ -159,10 +170,24 @@ function formatTimeDisplay(time24) {
 }
 
 function getStoredNumber(dataStore, date, time) {
-    if (!dataStore[date]) {
+    if (!dataStore[date] || !dataStore[date][time]) {
         return null;
     }
-    return dataStore[date][time] || null;
+
+    const slotValue = dataStore[date][time];
+    if (typeof slotValue === 'string') {
+        return {
+            andar: '--',
+            result: slotValue,
+            bahar: '--',
+        };
+    }
+
+    return {
+        andar: slotValue.andar || '--',
+        result: slotValue.result || '--',
+        bahar: slotValue.bahar || '--',
+    };
 }
 
 function autoConfirmPassedSlots() {
@@ -170,8 +195,14 @@ function autoConfirmPassedSlots() {
     const allData = lotteryData.getAll();
 
     Object.entries(allData).forEach(([date, timeSlots]) => {
-        Object.entries(timeSlots).forEach(([time, number]) => {
-            if (!number) {
+        Object.entries(timeSlots).forEach(([time, slotValue]) => {
+            const slot = typeof slotValue === 'string' ? { andar: '--', result: slotValue, bahar: '--' } : {
+                andar: slotValue.andar || '--',
+                result: slotValue.result || '--',
+                bahar: slotValue.bahar || '--',
+            };
+
+            if (slot.andar === '--' && slot.result === '--' && slot.bahar === '--') {
                 return;
             }
 
@@ -210,70 +241,120 @@ function updateAdminEditLock(date, time) {
     }
 }
 
-function removeUpcomingAutoResults() {
-    const allData = lotteryData.getAll();
-    let hasChanges = false;
-
-    Object.entries(allData).forEach(([date, timeSlots]) => {
-        Object.keys(timeSlots).forEach((time) => {
-            const key = `${date}|${time}`;
-            const isConfirmed = confirmedNumbers[key] === true;
-            const isUpcoming = !hasSlotPassed(date, time);
-
-            if (isUpcoming && !isConfirmed) {
-                delete timeSlots[time];
-                hasChanges = true;
-            }
-        });
-    });
-
-    if (hasChanges) {
-        lotteryData.saveToStorage();
-    }
-
-    return hasChanges;
-}
-
-function updateGeneratorModeUI() {
-    const modeText = document.getElementById('generatorModeText');
-    const toggleBtn = document.getElementById('toggleGeneratorModeBtn');
-    if (!modeText || !toggleBtn) {
+function renderUsersList() {
+    const userList = document.getElementById('userList');
+    if (!userList) {
         return;
     }
 
-    if (generatorMode === 'auto') {
-        modeText.textContent = 'Current Mode: AUTO';
-        toggleBtn.textContent = 'Switch to Manual';
-        toggleBtn.classList.remove('btn-primary');
-        toggleBtn.classList.add('btn-secondary');
-    } else {
-        modeText.textContent = 'Current Mode: MANUAL';
-        toggleBtn.textContent = 'Switch to Auto';
-        toggleBtn.classList.remove('btn-secondary');
-        toggleBtn.classList.add('btn-primary');
+    const userEntries = Object.keys(recordUsers).sort();
+    if (userEntries.length === 0) {
+        userList.innerHTML = '<p style="color:#999;">No users configured.</p>';
+        return;
+    }
+
+    const rows = userEntries.map((username) => {
+        return `<div style="display:flex; justify-content:space-between; gap:8px; padding:4px 0; border-bottom:1px solid #444;">` +
+            `<span>${username}</span>` +
+            `<button class="btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="deleteUserCredentials('${username}')">Delete</button>` +
+            `</div>`;
+    });
+
+    userList.innerHTML = rows.join('');
+}
+
+function saveUserCredentials() {
+    const usernameInput = document.getElementById('userNameInput');
+    const passwordInput = document.getElementById('userPasswordInput');
+    if (!usernameInput || !passwordInput) {
+        return;
+    }
+
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+        alert('Username must be 3-20 characters and only letters, numbers, or underscore.');
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9@#_$!%*?&]{4,20}$/.test(password)) {
+        alert('Password must be 4-20 characters and can include letters, numbers, and common symbols.');
+        return;
+    }
+
+    recordUsers[username] = password;
+    saveRecordUsers();
+    renderUsersList();
+
+    usernameInput.value = '';
+    passwordInput.value = '';
+}
+
+function deleteUserCredentials(usernameFromList) {
+    const usernameInput = document.getElementById('userNameInput');
+    const username = (usernameFromList || (usernameInput ? usernameInput.value.trim() : '')).trim();
+
+    if (!username) {
+        alert('Enter username to delete.');
+        return;
+    }
+
+    if (!recordUsers[username]) {
+        alert('User not found.');
+        return;
+    }
+
+    delete recordUsers[username];
+    saveRecordUsers();
+    renderUsersList();
+
+    if (usernameInput) {
+        usernameInput.value = '';
     }
 }
 
-function toggleGeneratorMode() {
-    generatorMode = generatorMode === 'auto' ? 'manual' : 'auto';
-    saveGeneratorMode();
-
-    if (generatorMode === 'manual') {
-        removeUpcomingAutoResults();
-    } else {
-        const today = new Date().toISOString().split('T')[0];
-        lotteryData.ensureDate(today);
+function toggleAdminMenu() {
+    const dropdown = document.getElementById('adminMenuDropdown');
+    if (!dropdown) {
+        return;
     }
+    dropdown.classList.toggle('active');
+}
 
-    updateGeneratorModeUI();
-    autoConfirmPassedSlots();
-    populateStoredDataPreview();
-
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    if (startDate && endDate) {
-        filterResults();
+function closeAdminMenu() {
+    const dropdown = document.getElementById('adminMenuDropdown');
+    if (!dropdown) {
+        return;
     }
+    dropdown.classList.remove('active');
+}
+
+function toggleUserManagementSection() {
+    const section = document.getElementById('userManagementSection');
+    if (!section) {
+        return;
+    }
+    section.classList.toggle('hidden');
+    if (!section.classList.contains('hidden')) {
+        renderUsersList();
+    }
+}
+
+function toggleTopMenu() {
+    const dropdown = document.getElementById('topMenuDropdown');
+    if (!dropdown) {
+        return;
+    }
+    dropdown.classList.toggle('active');
+}
+
+function closeTopMenu() {
+    const dropdown = document.getElementById('topMenuDropdown');
+    if (!dropdown) {
+        return;
+    }
+    dropdown.classList.remove('active');
 }
 
 // ================================
@@ -321,8 +402,6 @@ class LotteryData {
     }
 
     getByDateRange(startDate, endDate) {
-        this.ensureDateRange(startDate, endDate);
-
         const results = [];
         const start = new Date(startDate);
         const end = new Date(endDate);
@@ -332,13 +411,17 @@ class LotteryData {
             const date = current.toISOString().split('T')[0];
             TIME_SLOTS.forEach((time) => {
                 const isUpcoming = !hasSlotPassed(date, time);
-                const storedNumber = getStoredNumber(this.data, date, time);
-                const numberToShow = isUpcoming ? 'Pending' : (storedNumber || '--');
+                const storedSlot = getStoredNumber(this.data, date, time);
+                const andarToShow = isUpcoming ? 'Pending' : (storedSlot ? .andar || '--');
+                const resultToShow = isUpcoming ? 'Pending' : (storedSlot ? .result || '--');
+                const baharToShow = isUpcoming ? 'Pending' : (storedSlot ? .bahar || '--');
 
                 results.push({
                     date,
                     time,
-                    number: numberToShow,
+                    andar: andarToShow,
+                    result: resultToShow,
+                    bahar: baharToShow,
                     isUpcoming,
                 });
             });
@@ -352,11 +435,22 @@ class LotteryData {
         });
     }
 
-    saveResult(date, time, number) {
+    saveResult(date, time, slotData) {
         if (!this.data[date]) {
             this.data[date] = {};
         }
-        this.data[date][time] = number;
+
+        const existing = getStoredNumber(this.data, date, time) || {
+            andar: '--',
+            result: '--',
+            bahar: '--',
+        };
+
+        this.data[date][time] = {
+            andar: slotData.andar || existing.andar || '--',
+            result: slotData.result || existing.result || '--',
+            bahar: slotData.bahar || existing.bahar || '--',
+        };
         confirmedNumbers[`${date}|${time}`] = true;
         saveConfirmedNumbers();
         this.saveToStorage();
@@ -394,7 +488,7 @@ function renderTable(results) {
     tbody.innerHTML = '';
 
     if (results.length === 0) {
-        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="3" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
+        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="5" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
         updateRecordCount(0);
         return;
     }
@@ -412,8 +506,12 @@ function renderTable(results) {
         timeCell.textContent = formatTimeDisplay(result.time);
         row.appendChild(timeCell);
 
+        const andarCell = document.createElement('td');
+        andarCell.textContent = result.andar;
+        row.appendChild(andarCell);
+
         const numberCell = document.createElement('td');
-        numberCell.textContent = result.number;
+        numberCell.textContent = result.result;
         const key = `${result.date}|${result.time}`;
         const isConfirmed = confirmedNumbers[key] === true;
         if (result.isUpcoming) {
@@ -424,6 +522,10 @@ function renderTable(results) {
             numberCell.title = isConfirmed ? 'Confirmed by admin' : 'Auto-generated (pending admin confirmation)';
         }
         row.appendChild(numberCell);
+
+        const baharCell = document.createElement('td');
+        baharCell.textContent = result.bahar;
+        row.appendChild(baharCell);
 
         tbody.appendChild(row);
     });
@@ -483,7 +585,8 @@ function toggleAdminPanel() {
 
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
-        updateGeneratorModeUI();
+        renderUsersList();
+        closeAdminMenu();
         populateTimeSlots();
         populateStoredDataPreview();
         setDefaultAdminDate();
@@ -611,12 +714,12 @@ function loadAdminData() {
         return;
     }
 
-    const result = lotteryData.getResult(date, time);
+    const slot = lotteryData.getResult(date, time);
 
     updateAdminEditLock(date, time);
 
-    if (result) {
-        document.getElementById('result').value = result;
+    if (slot) {
+        document.getElementById('result').value = slot.result === '--' ? '' : slot.result;
     } else {
         document.getElementById('result').value = '';
     }
@@ -637,21 +740,21 @@ function saveAdminData() {
         return;
     }
 
-    const value = document.getElementById('result').value.trim();
+    const resultValue = document.getElementById('result').value.trim();
 
-    if (!value) {
-        alert('Please enter a result value');
+    if (!/^[0-9]{2}$/.test(resultValue)) {
+        alert('Enter exactly 2 digits from 00 to 99.');
         return;
     }
 
-    if (!/^[a-zA-Z0-9]{1,10}$/.test(value)) {
-        alert('Result can contain letters, numbers, or both (1-10 characters, no spaces).');
-        return;
-    }
+    const andarValue = resultValue.charAt(0);
+    const baharValue = resultValue.charAt(1);
 
-    const resultValue = value;
-
-    lotteryData.saveResult(date, time, resultValue);
+    lotteryData.saveResult(date, time, {
+        andar: andarValue || '--',
+        result: resultValue,
+        bahar: baharValue || '--',
+    });
     alert(`Result saved for ${date} at ${time}`);
     populateStoredDataPreview();
 
@@ -676,17 +779,24 @@ function populateStoredDataPreview() {
     }
 
     let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
-    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
+    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Andar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result</td><td style="padding: 4px; border: 1px solid #FFFF00;">Bahar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
 
     allDates.forEach(date => {
         const timeSlots = lotteryData.getAll()[date];
-        Object.entries(timeSlots).forEach(([time, number]) => {
+        Object.entries(timeSlots).forEach(([time, slotValue]) => {
+            const slot = typeof slotValue === 'string' ? { andar: '--', result: slotValue, bahar: '--' } : {
+                andar: slotValue.andar || '--',
+                result: slotValue.result || '--',
+                bahar: slotValue.bahar || '--',
+            };
             const key = `${date}|${time}`;
             const status = confirmedNumbers[key] ? '✓ Confirmed' : '⏳ Pending';
             html += `<tr style="background-color: #333; border: 1px solid #666;">`;
             html += `<td style="padding: 4px; border: 1px solid #666;">${formatDateDisplay(date)}</td>`;
             html += `<td style="padding: 4px; border: 1px solid #666;">${formatTimeDisplay(time)}</td>`;
-            html += `<td style="padding: 4px; border: 1px solid #666;">${number}</td>`;
+            html += `<td style="padding: 4px; border: 1px solid #666;">${slot.andar}</td>`;
+            html += `<td style="padding: 4px; border: 1px solid #666;">${slot.result}</td>`;
+            html += `<td style="padding: 4px; border: 1px solid #666;">${slot.bahar}</td>`;
             html += `<td style="padding: 4px; border: 1px solid #666; color: ${confirmedNumbers[key] ? '#00FF00' : '#FFAA00'};">${status}</td>`;
             html += `<td style="padding: 4px; border: 1px solid #666;"><button onclick="deleteStoredResult('${date}', '${time}')" class="btn-secondary" style="padding: 2px 4px; font-size: 10px;">Delete</button></td>`;
             html += `</tr>`;
@@ -717,6 +827,18 @@ function deleteStoredResult(date, time) {
 // ================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('topMenuDropdown');
+        const menuBtn = document.getElementById('topMenuBtn');
+        if (!dropdown || !menuBtn) {
+            return;
+        }
+
+        if (!dropdown.contains(event.target) && !menuBtn.contains(event.target)) {
+            closeTopMenu();
+        }
+    });
+
     // Set default date range to today
     const today = new Date().toISOString().split('T')[0];
     lotteryData.ensureDate(today);
@@ -724,30 +846,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('endDate').value = today;
 
     // Initial render with today's data (skeleton table)
-    autoConfirmPassedSlots();
     filterResults();
-    updateGeneratorModeUI();
 
     // Start live real-time clock
     updateRealTimeClock();
     setInterval(() => {
         updateRealTimeClock();
-        const hasNewConfirmations = autoConfirmPassedSlots();
-        if (hasNewConfirmations) {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            if (startDate && endDate) {
-                filterResults();
-            }
-
-            const adminModal = document.getElementById('adminModal');
-            if (adminModal && adminModal.classList.contains('active')) {
-                populateStoredDataPreview();
-
-                const adminDate = document.getElementById('adminDate').value;
-                const adminTime = document.getElementById('adminTime').value;
-                updateAdminEditLock(adminDate, adminTime);
-            }
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        if (startDate && endDate) {
+            filterResults();
         }
     }, 1000);
 

@@ -190,6 +190,60 @@
             line-height: 1.2;
         }
         
+        .menu-btn {
+            background-color: #333;
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            min-width: 180px;
+            background-color: #1a1a1a;
+            border: 1px solid #FFFF00;
+            border-radius: 8px;
+            padding: 8px;
+            display: none;
+            z-index: 1100;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+        
+        .menu-dropdown.active {
+            display: block;
+        }
+        
+        .menu-link {
+            width: 100%;
+            display: block;
+            text-align: left;
+            background-color: transparent;
+            color: #FFFF00;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .menu-link:hover {
+            background-color: #2d2d2d;
+            border-color: #FFFF00;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             body {
                 padding: 12px;
@@ -213,6 +267,9 @@
                 font-size: 11px;
                 padding: 5px 8px;
             }
+            .menu-dropdown {
+                min-width: 160px;
+            }
         }
     </style>
 </head>
@@ -225,7 +282,13 @@
             <div class="flex flex-wrap items-center gap-2 md:gap-3">
                 <div id="liveDate" class="header-clock-box"></div>
                 <div id="liveTime" class="header-clock-box"></div>
-                <button class="btn-secondary whitespace-nowrap" onclick="openAdminAuthModal()">Admin Panel</button>
+                <div class="relative">
+                    <button id="topMenuBtn" class="menu-btn" onclick="toggleTopMenu()">☰</button>
+                    <div id="topMenuDropdown" class="menu-dropdown">
+                        <button class="menu-link" onclick="openAdminAuthModal(); closeTopMenu();">Admin Panel</button>
+                        <a class="menu-link" href="record.html" onclick="closeTopMenu()">Record Page</a>
+                    </div>
+                </div>
             </div>
         </div>
         <p class="text-gray-400 mt-2">Check your lucky numbers</p>
@@ -282,7 +345,9 @@
                     <tr class="table-header">
                         <th>Date</th>
                         <th>Time</th>
+                        <th>Andar</th>
                         <th>Result</th>
+                        <th>Bahar</th>
                     </tr>
                 </thead>
                 <tbody id="resultsTable">
@@ -295,19 +360,16 @@
     <!-- Admin Panel Modal -->
     <div id="adminModal" class="modal-overlay">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Admin Panel - Enter Results</h2>
-                <button class="close-btn" onclick="toggleAdminPanel()">✕</button>
-            </div>
-
-            <!-- Generator Mode Toggle -->
-            <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                    <div>
-                        <label class="block font-bold">Result Generator Mode</label>
-                        <p id="generatorModeText" class="text-sm" style="color: #FFDD66;">Current Mode: AUTO</p>
+            <div class="flex justify-between items-start mb-6 gap-3">
+                <div>
+                    <h2 class="text-2xl font-bold">Admin Panel - Enter Results</h2>
+                    <p class="text-sm" style="color:#FFDD66;">Enter one 00-99 number and the app will split it into Andar and Bahar automatically.</p>
+                </div>
+                <div class="relative">
+                    <button id="adminMenuBtn" class="menu-btn" onclick="toggleAdminMenu()">☰</button>
+                    <div id="adminMenuDropdown" class="menu-dropdown">
+                        <button class="menu-link" onclick="toggleUserManagementSection(); closeAdminMenu();">Manage Record User</button>
                     </div>
-                    <button id="toggleGeneratorModeBtn" class="btn-secondary" onclick="toggleGeneratorMode()">Switch to Manual</button>
                 </div>
             </div>
 
@@ -335,12 +397,32 @@
             <!-- Result Input -->
             <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
                 <label class="block font-bold mb-4">Winning Number</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3">
                     <div>
-                        <label class="block text-sm mb-1">Result (letters/numbers)</label>
-                        <input type="text" id="result" class="admin-input w-full" maxlength="10" placeholder="A1">
+                        <label class="block text-sm mb-1">Enter 00-99</label>
+                        <input type="text" id="result" class="admin-input w-full" maxlength="2" placeholder="00" inputmode="numeric">
                     </div>
                 </div>
+            </div>
+
+            <!-- User Management -->
+            <div id="userManagementSection" class="mb-6 p-4 rounded hidden" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <label class="block font-bold mb-3">Manage Record Users</label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <div>
+                        <label class="block text-sm mb-1">Username</label>
+                        <input type="text" id="userNameInput" class="admin-input w-full" placeholder="counter4">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Password</label>
+                        <input type="text" id="userPasswordInput" class="admin-input w-full" placeholder="password">
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button class="btn-primary w-full" onclick="saveUserCredentials()">Add / Update</button>
+                        <button class="btn-secondary w-full" onclick="deleteUserCredentials()">Delete</button>
+                    </div>
+                </div>
+                <div id="userList" style="max-height: 120px; overflow-y: auto; font-size: 12px;"></div>
             </div>
 
             <!-- Action Buttons -->
@@ -359,7 +441,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=20260416-11"></script>
+    <script src="app.js?v=20260416-13"></script>
 </body>
 
 </html>
