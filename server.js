@@ -3,22 +3,64 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 
 const PORT = Number(process.env.PORT || 8000);
-const DB_PATH = path.join(__dirname, 'lottery.db');
+const DB_PATHS = Array.from(new Set([
+    process.env.DATABASE_PATH,
+    path.join(__dirname, 'lottery.db'),
+    path.join('/tmp', 'lottery.db'),
+].filter(Boolean)));
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 
-const db = new sqlite3.Database(DB_PATH);
+let db = null;
 
-db.serialize(() => {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS shared_state (
-            key TEXT PRIMARY KEY,
-            value TEXT NOT NULL,
-            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-});
+function openDatabase(dbPath) {
+    return new Promise((resolve, reject) => {
+        const connection = new sqlite3.Database(dbPath, (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve(connection);
+        });
+    });
+}
+
+async function initDatabase() {
+    let lastError = null;
+
+    for (const dbPath of DB_PATHS) {
+        try {
+            const connection = await openDatabase(dbPath);
+            await new Promise((resolve, reject) => {
+                connection.run(`
+                    CREATE TABLE IF NOT EXISTS shared_state (
+                        key TEXT PRIMARY KEY,
+                        value TEXT NOT NULL,
+                        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    )
+                `, (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    resolve();
+                });
+            });
+
+            db = connection;
+            console.log(`SQLite database ready at ${dbPath}`);
+            return;
+        } catch (error) {
+            lastError = error;
+            console.warn(`SQLite open failed for ${dbPath}:`, error.message);
+        }
+    }
+
+    throw lastError || new Error('Unable to open SQLite database');
+}
 
 function dbAll(sql, params = []) {
     return new Promise((resolve, reject) => {
@@ -143,6 +185,23 @@ app.delete('/api/state/:key', async(req, res) => {
 
 app.use(express.static(__dirname));
 
-app.listen(PORT, () => {
-    console.log(`Lottery server running at http://localhost:${PORT}`);
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled promise rejection:', error);
 });
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught exception:', error);
+});
+
+(async() => {
+    try {
+        await initDatabase();
+
+        app.listen(PORT, () => {
+            console.log(`Lottery server running at http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+})();
