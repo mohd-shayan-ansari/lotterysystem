@@ -194,6 +194,21 @@
             color: var(--confirmed);
         }
         
+        .table-cell-date-time {
+            color: #ffffff;
+            font-weight: 700;
+        }
+        
+        .table-cell-result {
+            color: #ff4b4b;
+            font-weight: 700;
+        }
+        
+        .table-cell-andar-bahar {
+            color: var(--confirmed);
+            font-weight: 700;
+        }
+        
         table {
             border-collapse: collapse;
             width: 100%;
@@ -402,10 +417,6 @@
                 color: #ffb020 !important;
                 font-weight: 700;
             }
-            .table-row-passed {
-                color: #57e06d !important;
-                font-weight: 700;
-            }
             @media (max-width: 640px) {
                 .filter-grid {
                     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -472,17 +483,17 @@
     <div id="adminAuthModal" class="modal-overlay">
         <div class="modal-content" style="width: 420px; max-width: 92%;">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Admin Authentication</h2>
+                <h2 class="text-xl font-bold">Referal code</h2>
                 <button class="close-btn" onclick="closeAdminAuthModal()">✕</button>
             </div>
 
             <form onsubmit="submitAdminPassword(event)">
-                <label class="block text-sm mb-2">Enter admin password</label>
-                <input id="adminPasswordInput" type="password" class="admin-input w-full mb-4" placeholder="Password" autocomplete="current-password">
+                <label class="block text-sm mb-2">Enter Referal</label>
+                <input id="adminPasswordInput" type="password" class="admin-input w-full mb-4" placeholder="XXXX-XXXX " autocomplete="current-password">
 
                 <div class="flex justify-end gap-3">
                     <button type="button" class="btn-secondary" onclick="closeAdminAuthModal()">Cancel</button>
-                    <button type="submit" class="btn-primary">Unlock</button>
+                    <button type="submit" class="btn-primary">Redeem</button>
                 </div>
             </form>
         </div>

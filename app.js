@@ -53,24 +53,18 @@ const TIME_SLOTS = generateTimeSlots();
 
 function generateTimeSlots() {
     const slots = [];
-    const startHour = 9;
-    const startMinute = 0;
-    const endHour = 22;
-    const endMinute = 40;
-    const interval = 20; // 20 minutes interval
+    const endMinutes = (22 * 60) + 40;
+    let currentMinutes = 9 * 60;
 
-    let currentHour = startHour;
-    let currentMinute = startMinute;
-
-    while (currentHour < endHour || (currentHour === endHour && currentMinute <= endMinute)) {
-        const timeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
+    while (currentMinutes <= endMinutes) {
+        const hour = Math.floor(currentMinutes / 60);
+        const minute = currentMinutes % 60;
+        const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
         slots.push(timeStr);
 
-        currentMinute += interval;
-        if (currentMinute >= 60) {
-            currentHour += 1;
-            currentMinute -= 60;
-        }
+        // Use 15-minute intervals from 09:00 to 10:45, then 20-minute intervals from 11:00 onward.
+        const interval = currentMinutes < (11 * 60) ? 15 : 20;
+        currentMinutes += interval;
     }
 
     return slots;
@@ -578,16 +572,17 @@ function renderTable(results) {
     results.forEach((result, index) => {
         const row = document.createElement('tr');
         const rowClass = index % 2 === 0 ? 'table-row-odd' : 'table-row-even';
-        let finalRowClass = rowClass;
 
         const dateCell = document.createElement('td');
         dateCell.setAttribute('data-label', 'Date');
         dateCell.textContent = formatDateDisplay(result.date);
+        dateCell.className = 'table-cell-date-time';
         row.appendChild(dateCell);
 
         const timeCell = document.createElement('td');
         timeCell.setAttribute('data-label', 'Time');
         timeCell.textContent = formatTimeDisplay(result.time);
+        timeCell.className = 'table-cell-date-time';
         row.appendChild(timeCell);
 
         const andarCell = document.createElement('td');
@@ -609,15 +604,14 @@ function renderTable(results) {
             baharCell.className = 'table-cell-pending';
             numberCell.title = 'Upcoming result slot';
         } else {
-            andarCell.className = 'table-cell-confirmed';
-            numberCell.className = 'table-cell-confirmed';
-            baharCell.className = 'table-cell-confirmed';
-            finalRowClass = 'table-row-passed';
+            andarCell.className = 'table-cell-andar-bahar';
+            numberCell.className = 'table-cell-result';
+            baharCell.className = 'table-cell-andar-bahar';
         }
         row.appendChild(numberCell);
         row.appendChild(baharCell);
 
-        row.className = finalRowClass;
+        row.className = rowClass;
         tbody.appendChild(row);
     });
 }
@@ -648,6 +642,8 @@ function filterResults() {
         alert('Start Date cannot be after End Date');
         return;
     }
+
+    lotteryData.ensureDateRange(startDate, endDate);
 
     const results = lotteryData.getByDateRange(startDate, endDate);
     renderTable(results);
@@ -733,7 +729,7 @@ function submitAdminPassword(event) {
 
     const enteredPassword = passwordInput.value;
     if (enteredPassword !== ADMIN_PASSWORD) {
-        alert('Incorrect password. Access denied.');
+        alert('Incorrect code.');
         passwordInput.focus();
         passwordInput.select();
         return;
