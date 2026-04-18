@@ -46,13 +46,6 @@
             background-color: var(--bg-card);
         }
         
-        .header-menu {
-            position: absolute;
-            top: var(--space-3);
-            right: var(--space-3);
-            z-index: 3000;
-        }
-        
         .header-tools {
             display: none !important;
         }
@@ -389,10 +382,6 @@
             .header {
                 padding: var(--space-3);
             }
-            .header-menu {
-                top: var(--space-2);
-                right: var(--space-2);
-            }
             .header-tools {
                 display: none !important;
                 width: 100%;
@@ -463,8 +452,7 @@
                 padding-right: 0;
                 margin-top: 0.25rem;
             }
-            .filter-actions,
-            .user-actions {
+            .filter-actions {
                 grid-template-columns: 1fr;
             }
         }
@@ -472,12 +460,6 @@
 </head>
 
 <body class="p-4 md:p-6">
-    <div class="header-menu">
-        <button id="topMenuBtn" class="menu-btn" onclick="toggleTopMenu()">☰</button>
-        <div id="topMenuDropdown" class="menu-dropdown">
-            <a class="menu-link" href="record.html" onclick="closeTopMenu()">Record Page</a>
-        </div>
-    </div>
 
     <!-- Admin Password Modal -->
     <div id="adminAuthModal" class="modal-overlay">
@@ -555,7 +537,7 @@
                     <button class="close-btn" onclick="toggleAdminPanel()" title="Close admin panel">✕</button>
                     <button id="adminMenuBtn" class="menu-btn" onclick="toggleAdminMenu()">☰</button>
                     <div id="adminMenuDropdown" class="menu-dropdown">
-                        <button class="menu-link" onclick="toggleUserManagementSection(); closeAdminMenu();">Manage Record User</button>
+                        <button class="menu-link" onclick="toggleAdminPasswordSection(); closeAdminMenu();">Update Admin Password</button>
                     </div>
                 </div>
             </div>
@@ -575,24 +557,27 @@
                 </div>
             </div>
 
-            <!-- User Management -->
-            <div id="userManagementSection" class="mb-6 p-4 rounded hidden" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
-                <label class="block font-bold mb-3">Manage Record Users</label>
+            <!-- Admin Password Management -->
+            <div id="adminPasswordSection" class="mb-6 p-4 rounded hidden" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
+                <label class="block font-bold mb-3">Update Admin Password</label>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                     <div>
-                        <label class="block text-sm mb-1">Username</label>
-                        <input type="text" id="userNameInput" class="admin-input w-full" placeholder="counter4">
+                        <label class="block text-sm mb-1">Current Password</label>
+                        <input type="password" id="currentAdminPasswordInput" class="admin-input w-full" placeholder="Current password" autocomplete="current-password">
                     </div>
                     <div>
-                        <label class="block text-sm mb-1">Password</label>
-                        <input type="text" id="userPasswordInput" class="admin-input w-full" placeholder="password">
+                        <label class="block text-sm mb-1">New Password</label>
+                        <input type="password" id="newAdminPasswordInput" class="admin-input w-full" placeholder="4-30 characters" autocomplete="new-password">
                     </div>
-                    <div class="flex items-end gap-2 user-actions">
-                        <button class="btn-primary w-full" onclick="saveUserCredentials()">Add / Update</button>
-                        <button class="btn-secondary w-full" onclick="deleteUserCredentials()">Delete</button>
+                    <div>
+                        <label class="block text-sm mb-1">Confirm New Password</label>
+                        <input type="password" id="confirmAdminPasswordInput" class="admin-input w-full" placeholder="Repeat new password" autocomplete="new-password">
                     </div>
                 </div>
-                <div id="userList" style="max-height: 120px; overflow-y: auto; font-size: 12px;"></div>
+                <div class="flex flex-wrap gap-3">
+                    <button class="btn-primary" onclick="updateAdminPassword()">Save Password</button>
+                    <button class="btn-secondary" onclick="resetAdminPasswordForm()">Cancel</button>
+                </div>
             </div>
 
             <!-- Stored Data Preview -->
@@ -654,7 +639,7 @@
                 }
 
                 const appScript = document.createElement('script');
-                appScript.src = 'app.js?v=20260417-06';
+                appScript.src = 'app.js?v=20260418-01';
                 document.body.appendChild(appScript);
             };
 

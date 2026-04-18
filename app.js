@@ -84,39 +84,16 @@ function saveConfirmedNumbers() {
     localStorage.setItem('lotteryConfirmedResults', JSON.stringify(confirmedNumbers));
 }
 
-function loadRecordUsers() {
-    const stored = localStorage.getItem('lotteryRecordUsers');
-    if (!stored) {
-        return {
-            counter1: 'counter1',
-            counter2: 'counter2',
-            counter3: 'counter3',
-        };
-    }
-
-    try {
-        const parsed = JSON.parse(stored);
-        if (parsed && typeof parsed === 'object') {
-            return parsed;
-        }
-    } catch (error) {
-        console.error('Failed to parse lotteryRecordUsers, resetting defaults.', error);
-    }
-
-    return {
-        counter1: 'counter1',
-        counter2: 'counter2',
-        counter3: 'counter3',
-    };
+function getAdminPassword() {
+    const stored = localStorage.getItem('lotteryAdminPassword');
+    return stored && stored.trim() ? stored : 'admin123';
 }
 
-function saveRecordUsers() {
-    localStorage.setItem('lotteryRecordUsers', JSON.stringify(recordUsers));
+function setAdminPassword(password) {
+    localStorage.setItem('lotteryAdminPassword', password);
 }
 
-const ADMIN_PASSWORD = 'admin123';
 let isAdminAuthenticated = false;
-const recordUsers = loadRecordUsers();
 
 // Initialize today's date with random numbers for all time slots
 function initializeDateWithRandomNumbers(dataStore, date) {
@@ -318,79 +295,6 @@ function updateAdminEditLock(date, time) {
     }
 }
 
-function renderUsersList() {
-    const userList = document.getElementById('userList');
-    if (!userList) {
-        return;
-    }
-
-    const userEntries = Object.keys(recordUsers).sort();
-    if (userEntries.length === 0) {
-        userList.innerHTML = '<p style="color:#999;">No users configured.</p>';
-        return;
-    }
-
-    const rows = userEntries.map((username) => {
-        return `<div style="display:flex; justify-content:space-between; gap:8px; padding:4px 0; border-bottom:1px solid #444;">` +
-            `<span>${username}</span>` +
-            `<button class="btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="deleteUserCredentials('${username}')">Delete</button>` +
-            `</div>`;
-    });
-
-    userList.innerHTML = rows.join('');
-}
-
-function saveUserCredentials() {
-    const usernameInput = document.getElementById('userNameInput');
-    const passwordInput = document.getElementById('userPasswordInput');
-    if (!usernameInput || !passwordInput) {
-        return;
-    }
-
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
-        alert('Username must be 3-20 characters and only letters, numbers, or underscore.');
-        return;
-    }
-
-    if (!/^[a-zA-Z0-9@#_$!%*?&]{4,20}$/.test(password)) {
-        alert('Password must be 4-20 characters and can include letters, numbers, and common symbols.');
-        return;
-    }
-
-    recordUsers[username] = password;
-    saveRecordUsers();
-    renderUsersList();
-
-    usernameInput.value = '';
-    passwordInput.value = '';
-}
-
-function deleteUserCredentials(usernameFromList) {
-    const usernameInput = document.getElementById('userNameInput');
-    const username = (usernameFromList || (usernameInput ? usernameInput.value.trim() : '')).trim();
-
-    if (!username) {
-        alert('Enter username to delete.');
-        return;
-    }
-
-    if (!recordUsers[username]) {
-        alert('User not found.');
-        return;
-    }
-
-    delete recordUsers[username];
-    saveRecordUsers();
-    renderUsersList();
-
-    if (usernameInput) {
-        usernameInput.value = '';
-    }
-}
-
 function toggleAdminMenu() {
     const dropdown = document.getElementById('adminMenuDropdown');
     if (!dropdown) {
@@ -407,31 +311,77 @@ function closeAdminMenu() {
     dropdown.classList.remove('active');
 }
 
-function toggleUserManagementSection() {
-    const section = document.getElementById('userManagementSection');
+function toggleAdminPasswordSection() {
+    const section = document.getElementById('adminPasswordSection');
     if (!section) {
         return;
     }
+
     section.classList.toggle('hidden');
+
     if (!section.classList.contains('hidden')) {
-        renderUsersList();
+        const currentPasswordInput = document.getElementById('currentAdminPasswordInput');
+        if (currentPasswordInput) {
+            currentPasswordInput.focus();
+        }
     }
 }
 
-function toggleTopMenu() {
-    const dropdown = document.getElementById('topMenuDropdown');
-    if (!dropdown) {
-        return;
+function resetAdminPasswordForm() {
+    const section = document.getElementById('adminPasswordSection');
+    const currentInput = document.getElementById('currentAdminPasswordInput');
+    const newInput = document.getElementById('newAdminPasswordInput');
+    const confirmInput = document.getElementById('confirmAdminPasswordInput');
+
+    if (section) {
+        section.classList.add('hidden');
     }
-    dropdown.classList.toggle('active');
+    if (currentInput) currentInput.value = '';
+    if (newInput) newInput.value = '';
+    if (confirmInput) confirmInput.value = '';
 }
 
-function closeTopMenu() {
-    const dropdown = document.getElementById('topMenuDropdown');
-    if (!dropdown) {
+function updateAdminPassword() {
+    const currentInput = document.getElementById('currentAdminPasswordInput');
+    const newInput = document.getElementById('newAdminPasswordInput');
+    const confirmInput = document.getElementById('confirmAdminPasswordInput');
+
+    if (!currentInput || !newInput || !confirmInput) {
         return;
     }
-    dropdown.classList.remove('active');
+
+    const currentPassword = currentInput.value.trim();
+    const newPassword = newInput.value.trim();
+    const confirmPassword = confirmInput.value.trim();
+
+    if (currentPassword !== getAdminPassword()) {
+        alert('Current password is incorrect.');
+        currentInput.focus();
+        currentInput.select();
+        return;
+    }
+
+    if (newPassword.length < 4 || newPassword.length > 30) {
+        alert('New password must be between 4 and 30 characters.');
+        newInput.focus();
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert('New password and confirm password do not match.');
+        confirmInput.focus();
+        return;
+    }
+
+    if (newPassword === currentPassword) {
+        alert('New password must be different from current password.');
+        newInput.focus();
+        return;
+    }
+
+    setAdminPassword(newPassword);
+    alert('Admin password updated successfully.');
+    resetAdminPasswordForm();
 }
 
 // ================================
@@ -674,7 +624,7 @@ function toggleAdminPanel() {
 
     modal.classList.toggle('active');
     if (modal.classList.contains('active')) {
-        renderUsersList();
+        resetAdminPasswordForm();
         closeAdminMenu();
         setDefaultAdminDate();
         populateStoredDataPreview();
@@ -728,7 +678,7 @@ function submitAdminPassword(event) {
     }
 
     const enteredPassword = passwordInput.value;
-    if (enteredPassword !== ADMIN_PASSWORD) {
+    if (enteredPassword !== getAdminPassword()) {
         alert('Incorrect code.');
         passwordInput.focus();
         passwordInput.select();
@@ -914,18 +864,6 @@ function deleteStoredResult(date, time) {
 // ================================
 
 function initializeDashboard() {
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('topMenuDropdown');
-        const menuBtn = document.getElementById('topMenuBtn');
-        if (!dropdown || !menuBtn) {
-            return;
-        }
-
-        if (!dropdown.contains(event.target) && !menuBtn.contains(event.target)) {
-            closeTopMenu();
-        }
-    });
-
     // Set default date range to today
     const today = applyTodayDateDefaults() || getLocalDateKey();
     lotteryData.ensureDate(today);
@@ -939,11 +877,6 @@ function initializeDashboard() {
     updateRealTimeClock();
     setInterval(() => {
         updateRealTimeClock();
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        if (startDate && endDate) {
-            filterResults();
-        }
     }, 1000);
 
     console.log('🎰 Play Bhag Laxmi Dashboard Initialized');
