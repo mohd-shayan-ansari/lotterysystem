@@ -117,15 +117,26 @@ function initializeDateWithRandomNumbers(dataStore, date) {
 
     TIME_SLOTS.forEach((time) => {
         const existing = getStoredNumber(dataStore, date, time);
-        if (existing && /^[0-9]{2}$/.test(existing.result || '')) {
+        const key = `${date}|${time}`;
+
+        // If this slot is already confirmed by an admin, we MUST NOT overwrite it.
+        if (confirmedNumbers[key] === true) {
             return;
         }
 
-        const randomValue = generateSeededNumber(date, time);
+        // Generate the deterministic seeded value for this slot.
+        const seededValue = generateSeededNumber(date, time);
+
+        // If the current value is already the seeded value, no need to update.
+        if (existing && existing.result === seededValue) {
+            return;
+        }
+
+        // Otherwise, force the seeded value to ensure all sites are consistent.
         dataStore[date][time] = {
-            andar: randomValue.charAt(0),
-            result: randomValue,
-            bahar: randomValue.charAt(1),
+            andar: seededValue.charAt(0),
+            result: seededValue,
+            bahar: seededValue.charAt(1),
         };
     });
 }
@@ -775,15 +786,22 @@ function ensureDateHasRandomSlots(date) {
     let changed = false;
     TIME_SLOTS.forEach((time) => {
         const existing = getStoredNumber(allData, date, time);
-        if (existing && /^[0-9]{2}$/.test(existing.result || '')) {
+        const key = `${date}|${time}`;
+
+        // Preserve admin-confirmed results
+        if (confirmedNumbers[key] === true) {
             return;
         }
 
-        const randomValue = generateSeededNumber(date, time);
+        const seededValue = generateSeededNumber(date, time);
+        if (existing && existing.result === seededValue) {
+            return;
+        }
+
         allData[date][time] = {
-            andar: randomValue.charAt(0),
-            result: randomValue,
-            bahar: randomValue.charAt(1),
+            andar: seededValue.charAt(0),
+            result: seededValue,
+            bahar: seededValue.charAt(1),
         };
         changed = true;
     });
