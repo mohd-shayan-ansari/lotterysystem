@@ -70,8 +70,22 @@ function generateTimeSlots() {
     return slots;
 }
 
-// Helper function to generate random number
+// Helper function to generate deterministic number based on date and time
+function generateSeededNumber(date, time) {
+    // Create a seed from date string (YYYY-MM-DD) and time string (HH:MM)
+    const seedStr = (date || '2026-01-01').replace(/-/g, '') + (time || '00:00').replace(/:/g, '');
+    let seed = parseInt(seedStr);
+
+    // Simple Linear Congruential Generator
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    seed = (seed * 1664525 + 1013904223) % 4294967296; // Second pass for better distribution
+
+    const result = seed % 100;
+    return String(result).padStart(2, '0');
+}
+
 function generateRandomNumber() {
+    // Deprecated, but keeping for compatibility if needed elsewhere
     return String(Math.floor(Math.random() * 100)).padStart(2, '0');
 }
 
@@ -107,7 +121,7 @@ function initializeDateWithRandomNumbers(dataStore, date) {
             return;
         }
 
-        const randomValue = generateRandomNumber();
+        const randomValue = generateSeededNumber(date, time);
         dataStore[date][time] = {
             andar: randomValue.charAt(0),
             result: randomValue,
@@ -155,10 +169,21 @@ function formatTimeDisplay(time24) {
 }
 
 function getLocalDateKey(date = new Date()) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // Force IST (Asia/Kolkata) to ensure consistency across different sites/timezones
+    try {
+        const istDateStr = date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+        const istDate = new Date(istDateStr);
+        const year = istDate.getFullYear();
+        const month = String(istDate.getMonth() + 1).padStart(2, '0');
+        const day = String(istDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } catch (e) {
+        // Fallback if Intl/timezone is not supported (unlikely in modern browsers)
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 }
 
 function parseDateKey(dateKey) {
@@ -754,7 +779,7 @@ function ensureDateHasRandomSlots(date) {
             return;
         }
 
-        const randomValue = generateRandomNumber();
+        const randomValue = generateSeededNumber(date, time);
         allData[date][time] = {
             andar: randomValue.charAt(0),
             result: randomValue,

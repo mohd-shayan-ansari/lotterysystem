@@ -100,9 +100,23 @@
 
         try {
             await preloadFromServer();
+            console.log('Shared state sync: Initial preload complete');
         } catch (error) {
             console.warn('Shared sync preload skipped:', error);
         }
+
+        // Start background polling to keep multiple sites in sync
+        setInterval(async() => {
+            try {
+                await preloadFromServer();
+                // If filterResults exists (from app.js), refresh the view
+                if (typeof window.filterResults === 'function') {
+                    window.filterResults();
+                }
+            } catch (error) {
+                console.warn('Shared sync background poll failed:', error);
+            }
+        }, 30000); // 30 seconds
 
         initialized = true;
     }
