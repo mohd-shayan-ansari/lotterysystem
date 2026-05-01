@@ -109,6 +109,216 @@ function setAdminPassword(password) {
 
 let isAdminAuthenticated = false;
 
+// ================================
+// DATABASE FUNCTIONS (SUPABASE)
+// ================================
+
+let supabaseClient = null;
+let lotteryResultsCache = {}; // Cache for lottery results
+// Supabase REST fallback config (used when client/session has auth issues)
+const SUPABASE_REST_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co/rest/v1';
+const SUPABASE_PROJECT_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co';
+const SUPABASE_PUBLIC_KEY = 'sb_publishable_Z6-LzeuJcuuL7MvFZCzUJg_mcXOiT_T';
+// Inline editing state for admin table cells
+const inlineEditState = {}; // key => { isEditing, currentValue, originalValue }
+
+// Initialize Supabase client
+function initSupabaseClient() {
+    if (supabaseClient) return;
+
+    // Check if Supabase was loaded by shared-sync.js
+    if (window.supabase) {
+        const SUPABASE_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Z6-LzeuJcuuL7MvFZCzUJg_mcXOiT_T';
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+}
+
+// Fetch all lottery results from database
+async function fetchLotteryResultsFromDB() {
+    try {
+        initSupabaseClient();
+
+        // Prefer supabase-js client when available
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('lottery_results')
+                    .select('date,time,andar,result,bahar,is_confirmed');
+
+                if (error) {
+                    console.warn('supabase-js select error, falling back to REST:', error.message || error);
+                } else if (data) {
+                    const cache = {};
+                    data.forEach(row => {
+                        if (!cache[row.date]) cache[row.date] = {};
+                        cache[row.date][row.time] = {
+                            andar: row.andar,
+                            result: row.result,
+                            bahar: row.bahar,
+                            is_confirmed: row.is_confirmed
+                        };
+                    });
+                    lotteryResultsCache = cache;
+                    return cache;
+                }
+            } catch (e) {
+                console.warn('supabase-js fetch failed, will try REST fallback', e);
+            }
+        }
+
+        // Fallback: call Supabase REST endpoint directly with public key headers to avoid 401
+        try {
+            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,andar,result,bahar,is_confirmed`;
+            const res = await fetch(url, {
+                headers: {
+                    'apikey': SUPABASE_PUBLIC_KEY,
+                    'Authorization': `Bearer ${SUPABASE_PUBLIC_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                console.error('REST fetch failed', res.status, await res.text());
+                return lotteryResultsCache;
+            }
+
+            const data = await res.json();
+            const cache = {};
+            data.forEach(row => {
+                if (!cache[row.date]) cache[row.date] = {};
+                cache[row.date][row.time] = {
+                    andar: row.andar,
+                    result: row.result,
+                    bahar: row.bahar,
+                    is_confirmed: row.is_confirmed
+                };
+            });
+            lotteryResultsCache = cache;
+            return cache;
+        } catch (e) {
+            console.error('REST fetch exception:', e);
+            return lotteryResultsCache;
+        }
+    } catch (e) {
+        console.error('Exception fetching results:', e);
+        return lotteryResultsCache;
+    }
+}
+
+// Auto-generate and save results for a date if not exists
+async function autoGenerateResultsForDate(date) {
+    try {
+        initSupabaseClient();
+        if (!supabaseClient) return;
+
+        // Check if any results exist for this date
+        const { data, error } = await supabaseClient
+            .from('lottery_results')
+            .select('date')
+            .eq('date', date)
+            .limit(1);
+
+        if (error) {
+            console.error('Error checking date:', error);
+            return;
+        }
+
+        // If results exist, don't regenerate
+        if (data && data.length > 0) {
+            return;
+        }
+
+        // Generate each slot via the secure RPC so it bypasses row-level insert restrictions.
+        const adminPassword = getAdminPassword();
+        for (const time of TIME_SLOTS) {
+            const resultNum = generateSeededNumber(date, time);
+            const { error: rpcError } = await supabaseClient.rpc('update_lottery_result', {
+                p_date: date,
+                p_time: time,
+                p_andar: resultNum.charAt(0),
+                p_result: resultNum,
+                p_bahar: resultNum.charAt(1),
+                p_password: adminPassword,
+            });
+
+            if (rpcError) {
+                console.error('Error auto-generating slot:', date, time, rpcError);
+                return;
+            }
+        }
+
+        console.log(`✅ Auto-generated results for ${date}`);
+        await fetchLotteryResultsFromDB();
+    } catch (e) {
+        console.error('Exception auto-generating:', e);
+    }
+}
+
+// Auto-generate results for today and next 7 days on first load
+async function autoGenerateInitialResults() {
+    try {
+        const today = getLocalDateKey();
+
+        // Generate for today + next 7 days
+        for (let i = 0; i < 7; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() + i);
+            const dateKey = getLocalDateKey(date);
+            await autoGenerateResultsForDate(dateKey);
+        }
+
+        console.log('✅ Initial results generation complete');
+    } catch (e) {
+        console.error('Exception in auto-generation:', e);
+    }
+}
+
+// Update a lottery result via RPC (admin only)
+async function updateLotteryResultInDB(date, time, andar, result, bahar) {
+    try {
+        initSupabaseClient();
+        if (!supabaseClient) {
+            console.error('Supabase not initialized');
+            return false;
+        }
+
+        const adminPassword = getAdminPassword();
+
+        const { error } = await supabaseClient.rpc('update_lottery_result', {
+            p_date: date,
+            p_time: time,
+            p_andar: andar,
+            p_result: result,
+            p_bahar: bahar,
+            p_password: adminPassword
+        });
+
+        if (error) {
+            alert('Error updating result: ' + error.message);
+            console.error('RPC error:', error);
+            return false;
+        }
+
+        // Update local cache
+        if (!lotteryResultsCache[date]) {
+            lotteryResultsCache[date] = {};
+        }
+        lotteryResultsCache[date][time] = {
+            andar,
+            result,
+            bahar,
+            is_confirmed: true
+        };
+
+        console.log(`✅ Updated result for ${date} ${time}: ${result}`);
+        return true;
+    } catch (e) {
+        console.error('Exception updating result:', e);
+        return false;
+    }
+}
+
 // Initialize today's date with random numbers for all time slots
 function initializeDateWithRandomNumbers(dataStore, date) {
     if (!dataStore[date]) {
@@ -264,6 +474,17 @@ function handleAdminDateChange() {
 }
 
 function getStoredNumber(dataStore, date, time) {
+    // First try database cache
+    if (lotteryResultsCache[date] && lotteryResultsCache[date][time]) {
+        const cached = lotteryResultsCache[date][time];
+        return {
+            andar: cached.andar || '--',
+            result: cached.result || '--',
+            bahar: cached.bahar || '--',
+        };
+    }
+
+    // Fallback to passed dataStore
     if (!dataStore[date] || !dataStore[date][time]) {
         return null;
     }
@@ -322,14 +543,15 @@ function updateAdminEditLock(date, time) {
     }
 
     const isLocked = Boolean(date && time && hasSlotPassed(date, time));
-    resultInput.disabled = isLocked;
-
+    resultInput.disabled = false;
     if (isLocked) {
-        resultInput.title = 'Past slot is locked and cannot be edited';
+        resultInput.title = 'Past slot is locked but editable by admin';
     } else {
         resultInput.title = '';
     }
 }
+
+
 
 function toggleAdminMenu() {
     const dropdown = document.getElementById('adminMenuDropdown');
@@ -435,8 +657,34 @@ class LotteryData {
     }
 
     ensureDate(date) {
-        initializeDateWithRandomNumbers(this.data, date);
-        this.saveToStorage();
+        // Ensure the date object exists
+        if (!this.data[date]) {
+            this.data[date] = {};
+        }
+
+        let changed = false;
+        TIME_SLOTS.forEach((time) => {
+            const key = `${date}|${time}`;
+            // Preserve admin-confirmed results
+            if (confirmedNumbers[key] === true) {
+                return;
+            }
+            // If slot is missing, generate a seeded value and store it
+            if (!this.data[date][time]) {
+                const seededValue = generateSeededNumber(date, time);
+                this.data[date][time] = {
+                    andar: seededValue.charAt(0),
+                    result: seededValue,
+                    bahar: seededValue.charAt(1),
+                };
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            // Persist the entire data object to localStorage, which will sync via shared-sync to Supabase
+            this.saveToStorage();
+        }
     }
 
     ensureDateRange(startDate, endDate) {
@@ -448,7 +696,7 @@ class LotteryData {
         while (current <= end) {
             const dateStr = getLocalDateKey(current);
             if (dateStr <= todayStr) {
-                initializeDateWithRandomNumbers(this.data, dateStr);
+                this.ensureDate(dateStr);
             }
             current.setDate(current.getDate() + 1);
         }
@@ -548,6 +796,9 @@ window.reloadSharedData = function() {
     confirmedNumbers = loadConfirmedNumbers();
     if (typeof filterResults === 'function') {
         filterResults();
+    }
+    if (typeof populateStoredDataPreview === 'function') {
+        populateStoredDataPreview();
     }
 };
 // ================================
@@ -674,6 +925,7 @@ function toggleAdminPanel() {
         populateStoredDataPreview();
     } else {
         isAdminAuthenticated = false;
+        window.isAdminAuthenticated = false;
     }
 }
 
@@ -730,6 +982,7 @@ function submitAdminPassword(event) {
     }
 
     isAdminAuthenticated = true;
+    window.isAdminAuthenticated = true;
     closeAdminAuthModal();
     toggleAdminPanel();
 }
@@ -814,42 +1067,56 @@ function ensureDateHasRandomSlots(date) {
         changed = true;
     });
 
-    if (changed) {
+    if (changed && window.isAdminAuthenticated) {
         lotteryData.saveToStorage();
     }
 }
 
 function saveInlineAdminResult(date, time, inputId) {
-    if (hasSlotPassed(date, time)) {
-        alert('This slot is already locked because the result time has passed.');
-        return;
-    }
-
+    console.log('saveInlineAdminResult called', date, time, inputId);
     const input = document.getElementById(inputId);
-    if (!input) {
+    let resultValue = '';
+    if (input) {
+        resultValue = String(input.value || '');
+    } else {
+        const display = document.getElementById(`display_${inputId}`);
+        if (display) {
+            resultValue = String(display.textContent || '');
+        } else {
+            console.warn('No input or display found for', inputId);
+            return;
+        }
+    }
+
+    resultValue = resultValue.trim();
+    if (!/^[0-9]{1,2}$/.test(resultValue)) {
+        alert('Enter exactly 1 or 2 digits from 0 to 99.');
+        if (input) input.focus();
         return;
     }
+    // Normalize to two digits
+    if (resultValue.length === 1) resultValue = '0' + resultValue;
 
-    const resultValue = input.value.trim();
-    if (!/^[0-9]{2}$/.test(resultValue)) {
-        alert('Enter exactly 2 digits from 00 to 99.');
-        input.focus();
-        return;
-    }
+    // Save to database via RPC
+    updateLotteryResultInDB(date, time, resultValue.charAt(0), resultValue, resultValue.charAt(1))
+        .then(success => {
+            if (success) {
+                // Also keep localStorage in sync for backward compatibility
+                lotteryData.saveResult(date, time, {
+                    andar: resultValue.charAt(0),
+                    result: resultValue,
+                    bahar: resultValue.charAt(1),
+                });
 
-    lotteryData.saveResult(date, time, {
-        andar: resultValue.charAt(0),
-        result: resultValue,
-        bahar: resultValue.charAt(1),
-    });
+                populateStoredDataPreview();
 
-    populateStoredDataPreview();
-
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    if (startDate && endDate) {
-        filterResults();
-    }
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (startDate && endDate) {
+                    filterResults();
+                }
+            }
+        });
 }
 
 function populateStoredDataPreview() {
@@ -863,36 +1130,177 @@ function populateStoredDataPreview() {
     }
 
     ensureDateHasRandomSlots(selectedDate);
-    const dayData = lotteryData.getAll()[selectedDate] || {};
+    const dayData = lotteryResultsCache[selectedDate] || {};
 
-    let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
+    let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed;">';
     html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Andar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result</td><td style="padding: 4px; border: 1px solid #FFFF00;">Bahar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
 
     TIME_SLOTS.forEach((time) => {
         const slot = getStoredNumber({
-            [selectedDate]: dayData
+            [selectedDate]: lotteryData.getAll()[selectedDate] || {}
         }, selectedDate, time) || { andar: '--', result: '--', bahar: '--' };
         const key = `${selectedDate}|${time}`;
-        const isLocked = hasSlotPassed(selectedDate, time);
         const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : generateRandomNumber();
-        const status = isLocked ? 'Locked' : (confirmedNumbers[key] ? 'Confirmed' : 'Editable');
+        const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
+        const status = isFromDB ?
+            (lotteryResultsCache[selectedDate][time].is_confirmed ? '✅ DB (Editable)' : '📊 Generated') :
+            (confirmedNumbers[key] ? '✅ Confirmed (Editable)' : 'Editable');
         const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
         const safeDate = selectedDate.replace(/'/g, "\\'");
         const safeTime = time.replace(/'/g, "\\'");
 
         html += `<tr style="background-color: #333; border: 1px solid #666;">`;
-        html += `<td style="padding: 4px; border: 1px solid #666;">${formatDateDisplay(selectedDate)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666;">${formatTimeDisplay(time)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666;">${value.charAt(0)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666;"><input id="${inputId}" class="admin-input" style="min-height:30px; padding:3px 6px; font-size:11px;" value="${value}" maxlength="2" ${isLocked ? 'disabled' : ''}></td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666;">${value.charAt(1)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666; color: ${isLocked ? '#999999' : '#00FF00'};">${status}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666;"><button class="btn-secondary" style="padding: 2px 6px; font-size: 10px;" onclick="saveInlineAdminResult('${safeDate}', '${safeTime}', '${inputId}')" ${isLocked ? 'disabled' : ''}>Save</button></td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(0)}</td>`;
+        // Render display box; input will be created on demand when editing
+        const displayId = `display_${inputId}`;
+        html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
+        html += `<div id="${displayId}" class="editable-display" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" style="background:#121212; border:2px solid #FFD700; padding:6px 8px; border-radius:6px; color:#f5df21; font-weight:700; cursor:pointer; text-align:center;">${value}</div>`;
+        html += `</td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(1)}</td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666; color: #00FF00; word-break: break-word;">${status}</td>`;
+        html += `<td style="padding: 4px; border: 1px solid #666;"><button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 10px; cursor: pointer; white-space: nowrap;" onclick="saveInlineAdminResult('${safeDate}', '${safeTime}', '${inputId}')">Save</button></td>`;
         html += `</tr>`;
     });
 
     html += '</table>';
     preview.innerHTML = html;
+
+    // Ensure display elements are interactive after rendering
+    setTimeout(() => {
+        TIME_SLOTS.forEach((time) => {
+            const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
+            const displayId = `display_${inputId}`;
+            const display = document.getElementById(displayId);
+            if (display) {
+                display.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const d = this.dataset;
+                    startInlineEdit(d.date, d.time, d.inputid);
+                });
+            }
+        });
+    }, 0);
+}
+
+// Start inline editing for a cell
+function startInlineEdit(date, time, inputId) {
+    const key = `${date}|${time}`;
+    const displayId = `display_${inputId}`;
+    const displayEl = document.getElementById(displayId);
+    if (!displayEl) return;
+    // Prevent duplicate
+    if (inlineEditState[key] && inlineEditState[key].isEditing) return;
+
+    const original = displayEl.textContent.trim();
+    inlineEditState[key] = { isEditing: true, currentValue: original, originalValue: original };
+
+    // Create input element
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.inputMode = 'numeric';
+    input.min = 0;
+    input.max = 99;
+    input.step = 1;
+    input.id = inputId;
+    input.value = original;
+    input.style.cssText = 'background-color: #222; color: #f5df21; border: 2px solid #FFD700; border-radius: 4px; padding: 6px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; cursor: text;';
+
+    // Handlers
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            commitInlineEdit(date, time, inputId, true);
+        } else if (e.key === 'Escape') {
+            cancelInlineEdit(date, time, inputId);
+        }
+    });
+    input.addEventListener('blur', (e) => {
+        // commit on blur but don't trigger immediate save to DB; mark modified
+        commitInlineEdit(date, time, inputId, false);
+    });
+
+    // Replace display element with input
+    displayEl.parentNode.replaceChild(input, displayEl);
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 0);
+}
+
+function commitInlineEdit(date, time, inputId, saveImmediately) {
+    const key = `${date}|${time}`;
+    const input = document.getElementById(inputId);
+    const displayId = `display_${inputId}`;
+    let newVal = '';
+    if (input) {
+        newVal = String(input.value || '').padStart(2, '0');
+        // Basic validation
+        if (!/^[0-9]{1,2}$/.test(newVal)) {
+            newVal = inlineEditState[key] ? inlineEditState[key].originalValue : '00';
+        }
+    } else {
+        // fallback: nothing to commit
+        return;
+    }
+
+    // Update state
+    inlineEditState[key] = inlineEditState[key] || {};
+    inlineEditState[key].isEditing = false;
+    inlineEditState[key].currentValue = newVal;
+
+    // Recreate display element
+    const displayEl = document.createElement('div');
+    displayEl.id = displayId;
+    displayEl.className = 'editable-display';
+    displayEl.dataset.inputid = inputId;
+    displayEl.dataset.date = date;
+    displayEl.dataset.time = time;
+    displayEl.style.cssText = 'background:#121212; border:2px solid #FFD700; padding:6px 8px; border-radius:6px; color:#f5df21; font-weight:700; cursor:pointer; text-align:center;';
+    displayEl.textContent = newVal;
+
+    const inputEl = document.getElementById(inputId);
+    if (inputEl && inputEl.parentNode) {
+        inputEl.parentNode.replaceChild(displayEl, inputEl);
+    }
+
+    // Mark row modified visually
+    try {
+        const row = displayEl.closest('tr');
+        if (row) row.style.outline = '2px solid rgba(255,215,0,0.12)';
+    } catch (e) {}
+
+    if (saveImmediately) {
+        // call save function which will use inputId to read value (input no longer exists), so call RPC directly
+        updateLotteryResultInDB(date, time, newVal.charAt(0), newVal, newVal.charAt(1)).then(success => {
+            if (success) {
+                // refresh preview
+                populateStoredDataPreview();
+            }
+        });
+    }
+}
+
+function cancelInlineEdit(date, time, inputId) {
+    const key = `${date}|${time}`;
+    const displayId = `display_${inputId}`;
+    const state = inlineEditState[key];
+    const current = state ? state.originalValue : '00';
+
+    const displayEl = document.createElement('div');
+    displayEl.id = displayId;
+    displayEl.className = 'editable-display';
+    displayEl.dataset.inputid = inputId;
+    displayEl.dataset.date = date;
+    displayEl.dataset.time = time;
+    displayEl.style.cssText = 'background:#121212; border:2px solid #FFD700; padding:6px 8px; border-radius:6px; color:#f5df21; font-weight:700; cursor:pointer; text-align:center;';
+    displayEl.textContent = current;
+
+    const inputEl = document.getElementById(inputId);
+    if (inputEl && inputEl.parentNode) {
+        inputEl.parentNode.replaceChild(displayEl, inputEl);
+    }
+    if (inlineEditState[key]) inlineEditState[key].isEditing = false;
 }
 
 function deleteStoredResult(date, time) {
@@ -921,6 +1329,20 @@ function initializeDashboard() {
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
 
+    // Fetch lottery results from database on initialization
+    (async() => {
+        console.log('📥 Loading lottery results from database...');
+
+        // Fetch existing results
+        await fetchLotteryResultsFromDB();
+
+        // Auto-generate results for today and next 7 days if they don't exist
+        await autoGenerateInitialResults();
+
+        // Reload to display database results
+        window.reloadLotteryResults();
+    })();
+
     // Initial render with today's data (skeleton table)
     filterResults();
 
@@ -932,8 +1354,24 @@ function initializeDashboard() {
 
     console.log('🎰 Play Bhag Laxmi Dashboard Initialized');
     console.log('Available time slots:', TIME_SLOTS);
-    console.log('Today\'s skeleton data generated with random numbers');
+    console.log('Today\'s results loaded from database');
 }
+
+// Reload lottery results from database
+window.reloadLotteryResults = function() {
+    // Fetch from database
+    (async() => {
+        await fetchLotteryResultsFromDB();
+
+        // Refresh the UI
+        if (typeof filterResults === 'function') {
+            filterResults();
+        }
+        if (typeof populateStoredDataPreview === 'function') {
+            populateStoredDataPreview();
+        }
+    })();
+};
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeDashboard);
