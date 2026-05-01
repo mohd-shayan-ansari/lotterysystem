@@ -1074,6 +1074,11 @@ function ensureDateHasRandomSlots(date) {
 
 function saveInlineAdminResult(date, time, inputId) {
     console.log('saveInlineAdminResult called', date, time, inputId);
+    if (hasSlotPassed(date, time)) {
+        alert('This timeslot is locked after its scheduled time.');
+        return;
+    }
+
     const input = document.getElementById(inputId);
     let resultValue = '';
     if (input) {
@@ -1136,27 +1141,28 @@ function populateStoredDataPreview() {
     html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Andar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result</td><td style="padding: 4px; border: 1px solid #FFFF00;">Bahar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
 
     TIME_SLOTS.forEach((time) => {
-        const slot = getStoredNumber({
-            [selectedDate]: lotteryData.getAll()[selectedDate] || {}
-        }, selectedDate, time) || { andar: '--', result: '--', bahar: '--' };
-        const key = `${selectedDate}|${time}`;
-        const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : generateRandomNumber();
-        const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
-        const status = isFromDB ?
-            (lotteryResultsCache[selectedDate][time].is_confirmed ? '✅ DB (Editable)' : '📊 Generated') :
-            (confirmedNumbers[key] ? '✅ Confirmed (Editable)' : 'Editable');
-        const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
-        const safeDate = selectedDate.replace(/'/g, "\\'");
-        const safeTime = time.replace(/'/g, "\\'");
+                const slot = getStoredNumber({
+                    [selectedDate]: lotteryData.getAll()[selectedDate] || {}
+                }, selectedDate, time) || { andar: '--', result: '--', bahar: '--' };
+                const key = `${selectedDate}|${time}`;
+                const isLocked = hasSlotPassed(selectedDate, time);
+                const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : generateRandomNumber();
+                const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
+                const status = isFromDB ?
+                    (lotteryResultsCache[selectedDate][time].is_confirmed ? '✅ DB (Editable)' : '📊 Generated') :
+                    (confirmedNumbers[key] ? '✅ Confirmed (Editable)' : 'Editable');
+                const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                const safeDate = selectedDate.replace(/'/g, "\\'");
+                const safeTime = time.replace(/'/g, "\\'");
 
-        html += `<tr style="background-color: #333; border: 1px solid #666;">`;
-        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(0)}</td>`;
-        // Render display box; input will be created on demand when editing
-        const displayId = `display_${inputId}`;
-        html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
-        html += `<div id="${displayId}" class="editable-display" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" style="background:#121212; border:2px solid #FFD700; padding:6px 8px; border-radius:6px; color:#f5df21; font-weight:700; cursor:pointer; text-align:center;">${value}</div>`;
+                html += `<tr style="background-color: #333; border: 1px solid #666;">`;
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(0)}</td>`;
+                // Render display box; input will be created on demand when editing
+                const displayId = `display_${inputId}`;
+                html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
+                html += `<div id="${displayId}" class="editable-display${isLocked ? ' locked-cell' : ''}" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" data-locked="${isLocked ? 'true' : 'false'}" style="background:${isLocked ? '#2b2b2b' : '#121212'}; border:2px solid ${isLocked ? '#666' : '#FFD700'}; padding:6px 8px; border-radius:6px; color:${isLocked ? '#8d8d8d' : '#f5df21'}; font-weight:700; cursor:${isLocked ? 'not-allowed' : 'pointer'}; text-align:center; ${isLocked ? 'opacity:0.92;' : ''}">${isLocked ? `${value} 🔒` : value}</div>`;
         html += `</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(1)}</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666; color: #00FF00; word-break: break-word;">${status}</td>`;
@@ -1174,6 +1180,9 @@ function populateStoredDataPreview() {
             const displayId = `display_${inputId}`;
             const display = document.getElementById(displayId);
             if (display) {
+                if (display.dataset.locked === 'true') {
+                    return;
+                }
                 display.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const d = this.dataset;
