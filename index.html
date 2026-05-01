@@ -656,9 +656,9 @@
                 const maxRetries = 30;
 
                 const tryRefresh = function() {
-                    if (typeof window.filterResults === 'function') {
+                    if (typeof window.reloadSharedData === 'function') {
                         try {
-                            window.filterResults();
+                            window.reloadSharedData();
                         } catch (error) {
                             console.warn('Post-sync refresh failed:', error);
                         }

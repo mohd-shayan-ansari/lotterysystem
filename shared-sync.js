@@ -100,8 +100,8 @@
                 }
                 
                 // Trigger view update in frontend to reflect the newly received data
-                if (typeof window.filterResults === 'function') {
-                    window.filterResults();
+                if (typeof window.reloadSharedData === 'function') {
+                    window.reloadSharedData();
                 }
             })
             .subscribe((status) => {

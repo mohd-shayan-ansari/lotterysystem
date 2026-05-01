@@ -541,7 +541,15 @@ class LotteryData {
 const lotteryData = new LotteryData();
 
 // Separate storage for confirmed vs pending
-const confirmedNumbers = loadConfirmedNumbers();
+let confirmedNumbers = loadConfirmedNumbers();
+
+window.reloadSharedData = function() {
+    lotteryData.loadFromStorage();
+    confirmedNumbers = loadConfirmedNumbers();
+    if (typeof filterResults === 'function') {
+        filterResults();
+    }
+};
 // ================================
 // TABLE RENDERING
 // ================================
