@@ -1,0 +1,2007 @@
+Attached Element Context from Integrated Browser
+
+Element: body
+
+HTML Path:
+body
+
+Computed Styles:
+- margin: 0px 0px 0px 0px
+- padding: 13.24px 13.24px 13.24px 13.24px
+- --bg-card: #111
+- --bg-card-muted: #2d2d2d
+- --bg-card-soft: #222
+- --bg-main: #f0dc2e
+- --border-main: #f5df21
+- --danger: #ff8787
+- --radius-md: 0.75rem
+- --radius-sm: 0.5rem
+- --space-1: 0.5rem
+- --space-2: 0.75rem
+- --space-3: 1rem
+- --space-4: 1.25rem
+- --text-dark: #151515
+- --text-main: #f8e93f
+- --text-soft: #ffdf64
+- -electron-corner-smoothing: none
+- -webkit-border-horizontal-spacing: 0px
+- -webkit-border-image: none
+- -webkit-border-vertical-spacing: 0px
+- -webkit-box-align: stretch
+- -webkit-box-decoration-break: slice
+- -webkit-box-direction: normal
+- -webkit-box-flex: 0
+- -webkit-box-ordinal-group: 1
+- -webkit-box-orient: horizontal
+- -webkit-box-pack: start
+- -webkit-box-reflect: none
+- -webkit-font-smoothing: auto
+- -webkit-line-break: auto
+- -webkit-line-clamp: none
+- -webkit-locale: "en"
+- -webkit-mask-box-image-outset: 0
+- -webkit-mask-box-image-repeat: stretch
+- -webkit-mask-box-image-slice: 0 fill
+- -webkit-mask-box-image-source: none
+- -webkit-mask-box-image-width: auto
+- -webkit-mask-position-x: 0%
+- -webkit-mask-position-y: 0%
+- -webkit-perspective-origin-x: 
+- -webkit-perspective-origin-y: 
+- -webkit-rtl-ordering: logical
+- -webkit-ruby-position: before
+- -webkit-tap-highlight-color: rgba(0, 0, 0, 0.18)
+- -webkit-text-combine: none
+- -webkit-text-decorations-in-effect: none
+- -webkit-text-fill-color: rgb(248, 233, 63)
+- -webkit-text-orientation: vertical-right
+- -webkit-text-security: none
+- -webkit-text-stroke-color: rgb(248, 233, 63)
+- -webkit-text-stroke-width: 0px
+- -webkit-transform-origin-x: 
+- -webkit-transform-origin-y: 
+- -webkit-transform-origin-z: 
+- -webkit-user-drag: auto
+- -webkit-user-modify: read-only
+- -webkit-writing-mode: horizontal-tb
+- accent-color: auto
+- align-content: normal
+- align-items: normal
+- align-self: auto
+- alignment-baseline: auto
+- all: 
+- anchor-name: none
+- anchor-scope: none
+- animation-composition: replace
+- animation-delay: 0s
+- animation-direction: normal
+- animation-duration: 0s
+- animation-fill-mode: none
+- animation-iteration-count: 1
+- animation-name: none
+- animation-play-state: running
+- animation-range-end: normal
+- animation-range-start: normal
+- animation-timeline: auto
+- animation-timing-function: ease
+- app-region: none
+- appearance: none
+- aspect-ratio: auto
+- backdrop-filter: none
+- backface-visibility: visible
+- background-attachment: scroll
+- background-blend-mode: normal
+- background-clip: border-box
+- background-color: rgb(240, 220, 46)
+- background-image: none
+- background-origin: padding-box
+- background-position-x: 0%
+- background-position-y: 0%
+- background-repeat: repeat
+- background-size: auto
+- baseline-shift: 0px
+- baseline-source: auto
+- block-size: 21178.5px
+- border-block-end-color: rgb(248, 233, 63)
+- border-block-end-style: none
+- border-block-end-width: 0px
+- border-block-start-color: rgb(248, 233, 63)
+- border-block-start-style: none
+- border-block-start-width: 0px
+- border-bottom-color: rgb(248, 233, 63)
+- border-bottom-left-radius: 0px
+- border-bottom-right-radius: 0px
+- border-bottom-style: none
+- border-bottom-width: 0px
+- border-collapse: separate
+- border-end-end-radius: 0px
+- border-end-start-radius: 0px
+- border-image-outset: 0
+- border-image-repeat: stretch
+- border-image-slice: 100%
+- border-image-source: none
+- border-image-width: 1
+- border-inline-end-color: rgb(248, 233, 63)
+- border-inline-end-style: none
+- border-inline-end-width: 0px
+- border-inline-start-color: rgb(248, 233, 63)
+- border-inline-start-style: none
+- border-inline-start-width: 0px
+- border-left-color: rgb(248, 233, 63)
+- border-left-style: none
+- border-left-width: 0px
+- border-right-color: rgb(248, 233, 63)
+- border-right-style: none
+- border-right-width: 0px
+- border-start-end-radius: 0px
+- border-start-start-radius: 0px
+- border-top-color: rgb(248, 233, 63)
+- border-top-left-radius: 0px
+- border-top-right-radius: 0px
+- border-top-style: none
+- border-top-width: 0px
+- bottom: auto
+- box-decoration-break: slice
+- box-shadow: none
+- box-sizing: border-box
+- break-after: auto
+- break-before: auto
+- break-inside: auto
+- buffered-rendering: auto
+- caption-side: top
+- caret-animation: auto
+- caret-color: rgb(248, 233, 63)
+- clear: none
+- clip: auto
+- clip-path: none
+- clip-rule: nonzero
+- color: rgb(248, 233, 63)
+- color-interpolation: srgb
+- color-interpolation-filters: linearrgb
+- color-rendering: auto
+- color-scheme: normal
+- column-count: auto
+- column-fill: balance
+- column-gap: normal
+- column-rule-color: rgb(248, 233, 63)
+- column-rule-style: none
+- column-rule-width: 0px
+- column-span: none
+- column-width: auto
+- contain: none
+- contain-intrinsic-block-size: none
+- contain-intrinsic-height: none
+- contain-intrinsic-inline-size: none
+- contain-intrinsic-width: none
+- container-name: none
+- container-type: normal
+- content: normal
+- content-visibility: visible
+- corner-bottom-left-shape: round
+- corner-bottom-right-shape: round
+- corner-end-end-shape: round
+- corner-end-start-shape: round
+- corner-start-end-shape: round
+- corner-start-start-shape: round
+- corner-top-left-shape: round
+- corner-top-right-shape: round
+- counter-increment: none
+- counter-reset: none
+- counter-set: none
+- cursor: auto
+- cx: 0px
+- cy: 0px
+- d: none
+- direction: ltr
+- display: block
+- dominant-baseline: auto
+- dynamic-range-limit: no-limit
+- empty-cells: show
+- field-sizing: fixed
+- fill: rgb(0, 0, 0)
+- fill-opacity: 1
+- fill-rule: nonzero
+- filter: none
+- flex-basis: auto
+- flex-direction: row
+- flex-grow: 0
+- flex-shrink: 1
+- flex-wrap: nowrap
+- float: none
+- flood-color: rgb(0, 0, 0)
+- flood-opacity: 1
+- font-family: "Times New Roman"
+- font-feature-settings: normal
+- font-kerning: auto
+- font-optical-sizing: auto
+- font-palette: normal
+- font-size: 16px
+- font-size-adjust: none
+- font-stretch: 100%
+- font-style: normal
+- font-synthesis-small-caps: auto
+- font-synthesis-style: auto
+- font-synthesis-weight: auto
+- font-variant-alternates: normal
+- font-variant-caps: normal
+- font-variant-east-asian: normal
+- font-variant-emoji: normal
+- font-variant-ligatures: normal
+- font-variant-numeric: normal
+- font-variant-position: normal
+- font-variation-settings: normal
+- font-weight: 400
+- forced-color-adjust: auto
+- grid-auto-columns: auto
+- grid-auto-flow: row
+- grid-auto-rows: auto
+- grid-column-end: auto
+- grid-column-start: auto
+- grid-row-end: auto
+- grid-row-start: auto
+- grid-template-areas: none
+- grid-template-columns: none
+- grid-template-rows: none
+- height: 21178.5px
+- hyphenate-character: auto
+- hyphenate-limit-chars: auto
+- hyphens: manual
+- image-orientation: from-image
+- image-rendering: auto
+- initial-letter: normal
+- inline-size: 647px
+- inset-block-end: auto
+- inset-block-start: auto
+- inset-inline-end: auto
+- inset-inline-start: auto
+- interactivity: auto
+- interest-delay-end: normal
+- interest-delay-start: normal
+- interpolate-size: numeric-only
+- isolation: auto
+- justify-content: normal
+- justify-items: normal
+- justify-self: auto
+- left: auto
+- letter-spacing: normal
+- lighting-color: rgb(255, 255, 255)
+- line-break: auto
+- line-height: 22.4px
+- list-style-image: none
+- list-style-position: outside
+- list-style-type: disc
+- margin-block-end: 0px
+- margin-block-start: 0px
+- margin-inline-end: 0px
+- margin-inline-start: 0px
+- marker-end: none
+- marker-mid: none
+- marker-start: none
+- mask-clip: border-box
+- mask-composite: add
+- mask-image: none
+- mask-mode: match-source
+- mask-origin: border-box
+- mask-repeat: repeat
+- mask-size: auto
+- mask-type: luminance
+- math-depth: 0
+- math-shift: normal
+- math-style: normal
+- max-block-size: none
+- max-height: none
+- max-inline-size: none
+- max-width: none
+- min-block-size: 0px
+- min-height: 0px
+- min-inline-size: 0px
+- min-width: 0px
+- mix-blend-mode: normal
+- object-fit: fill
+- object-position: 50% 50%
+- object-view-box: none
+- offset-anchor: auto
+- offset-distance: 0px
+- offset-path: none
+- offset-position: normal
+- offset-rotate: auto 0deg
+- opacity: 1
+- order: 0
+- orphans: 2
+- outline-color: rgb(248, 233, 63)
+- outline-offset: 0px
+- outline-style: none
+- outline-width: 0px
+- overflow-anchor: auto
+- overflow-block: visible
+- overflow-clip-margin: 0px
+- overflow-inline: visible
+- overflow-wrap: normal
+- overflow-x: visible
+- overflow-y: visible
+- overlay: none
+- overscroll-behavior-block: auto
+- overscroll-behavior-inline: auto
+- overscroll-behavior-x: auto
+- overscroll-behavior-y: auto
+- padding-block-end: 13.24px
+- padding-block-start: 13.24px
+- padding-inline-end: 13.24px
+- padding-inline-start: 13.24px
+- page: auto
+- page-orientation: 
+- paint-order: normal
+- perspective: none
+- perspective-origin: 323.5px 10589.2px
+- pointer-events: auto
+- position: static
+- position-anchor: auto
+- position-area: none
+- position-try-fallbacks: none
+- position-try-order: normal
+- position-visibility: anchors-visible
+- print-color-adjust: economy
+- quotes: auto
+- r: 0px
+- reading-flow: normal
+- reading-order: 0
+- resize: none
+- right: auto
+- rotate: none
+- row-gap: normal
+- ruby-align: space-around
+- ruby-position: over
+- rx: auto
+- ry: auto
+- scale: none
+- scroll-behavior: auto
+- scroll-initial-target: none
+- scroll-margin-block-end: 0px
+- scroll-margin-block-start: 0px
+- scroll-margin-bottom: 0px
+- scroll-margin-inline-end: 0px
+- scroll-margin-inline-start: 0px
+- scroll-margin-left: 0px
+- scroll-margin-right: 0px
+- scroll-margin-top: 0px
+- scroll-marker-group: none
+- scroll-padding-block-end: auto
+- scroll-padding-block-start: auto
+- scroll-padding-bottom: auto
+- scroll-padding-inline-end: auto
+- scroll-padding-inline-start: auto
+- scroll-padding-left: auto
+- scroll-padding-right: auto
+- scroll-padding-top: auto
+- scroll-snap-align: none
+- scroll-snap-stop: normal
+- scroll-snap-type: none
+- scroll-target-group: none
+- scroll-timeline-axis: block
+- scroll-timeline-name: none
+- scrollbar-color: auto
+- scrollbar-gutter: auto
+- scrollbar-width: auto
+- shape-image-threshold: 0
+- shape-margin: 0px
+- shape-outside: none
+- shape-rendering: auto
+- size: 
+- speak: normal
+- stop-color: rgb(0, 0, 0)
+- stop-opacity: 1
+- stroke: none
+- stroke-dasharray: none
+- stroke-dashoffset: 0px
+- stroke-linecap: butt
+- stroke-linejoin: miter
+- stroke-miterlimit: 4
+- stroke-opacity: 1
+- stroke-width: 1px
+- tab-size: 8
+- table-layout: auto
+- text-align: start
+- text-align-last: auto
+- text-anchor: start
+- text-autospace: no-autospace
+- text-box-edge: auto
+- text-box-trim: none
+- text-combine-upright: none
+- text-decoration-color: rgb(248, 233, 63)
+- text-decoration-line: none
+- text-decoration-skip-ink: auto
+- text-decoration-style: solid
+- text-decoration-thickness: auto
+- text-emphasis-color: rgb(248, 233, 63)
+- text-emphasis-position: over
+- text-emphasis-style: none
+- text-indent: 0px
+- text-orientation: mixed
+- text-overflow: clip
+- text-rendering: auto
+- text-shadow: none
+- text-size-adjust: auto
+- text-spacing-trim: normal
+- text-transform: none
+- text-underline-offset: auto
+- text-underline-position: auto
+- text-wrap-mode: wrap
+- text-wrap-style: auto
+- timeline-scope: none
+- top: auto
+- touch-action: auto
+- transform: none
+- transform-box: view-box
+- transform-origin: 323.5px 10589.3px
+- transform-style: flat
+- transition-behavior: normal
+- transition-delay: 0s
+- transition-duration: 0s
+- transition-property: all
+- transition-timing-function: ease
+- translate: none
+- unicode-bidi: normal
+- user-select: auto
+- vector-effect: none
+- vertical-align: baseline
+- view-timeline-axis: block
+- view-timeline-inset: auto
+- view-timeline-name: none
+- view-transition-class: none
+- view-transition-group: normal
+- view-transition-name: none
+- visibility: visible
+- white-space-collapse: collapse
+- widows: 2
+- width: 647px
+- will-change: auto
+- word-break: normal
+- word-spacing: 0px
+- writing-mode: horizontal-tb
+- x: 0px
+- y: 0px
+- z-index: auto
+- zoom: 1
+
+Dimensions:
+- top: 0px
+- left: 0px
+- width: 647px
+- height: 21179px
+
+Outer HTML:
+```html
+<body>
+    <div class="card hidden" id="loginCard">
+        <h2 class="title">Record Login</h2>
+        <input id="loginUser" class="input" type="text" placeholder="Username">
+        <input id="loginPass" class="input" type="password" placeholder="Password">
+        <div class="row-actions">
+            <button class="btn" onclick="loginPortalUser()">Login</button>
+            <a class="btn btn-secondary" href="index.html">Back to Dashboard</a>
+        </div>
+        <p class="hint">Admin: admin/admin123. Counter users: from record user list.</p>
+        <p id="loginMsg" class="error"></p>
+    </div>
+
+    <div id="recordsSection" class="card">
+        <div class="row-actions" style="justify-content: space-between; margin-bottom: 10px;">
+            <h2 class="title" style="margin: 0;">Record Page</h2>
+            <div class="row-actions">
+                <button id="recordSaveBtn" class="btn" onclick="saveRecordInputs()">Save Record Data</button>
+                <button id="refreshAdminBtn" class="btn btn-secondary hidden" onclick="renderAdminDashboard()">Refresh</button>
+                <button class="btn btn-danger" onclick="logoutRecordUser()">Cut</button>
+            </div>
+        </div>
+
+        <p id="welcomeText" class="hint">Logged in as counter1.</p>
+
+        <div id="adminDashboard" class="hidden">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Block 1</th>
+                            <th>Block 2</th>
+                            <th>Block 3</th>
+                            <th>Block 4</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminRecordRows"><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>09:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>09:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>09:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>10:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>10:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>10:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>11:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>11:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>11:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>12:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>12:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>12:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>01:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>01:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>01:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>02:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>02:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>14/04/2026</td>
+                        <td>02:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>09:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>09:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>09:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>10:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>10:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>10:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>11:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>11:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>11:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>12:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>12:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>12:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>01:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>01:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>01:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>02:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>02:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>15/04/2026</td>
+                        <td>02:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>09:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>09:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>09:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>10:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>10:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>10:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>11:00 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>11:20 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>11:40 AM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>12:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>12:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>12:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>01:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>01:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>01:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>02:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>02:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>02:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>03:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>03:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>03:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>04:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>04:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>04:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>05:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>05:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>05:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>06:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>06:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>06:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>07:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>07:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>07:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>08:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>08:20 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>08:40 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr><tr>
+                        <td>counter1</td>
+                        <td>17/04/2026</td>
+                        <td>09:00 PM</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                    </tr></tbody>
+                </table>
+            </div>
+            <p class="hint" style="margin-top: 8px;">Admin view shows all counters together.</p>
+        </div>
+
+        <div id="userRecordsWrap" class="records-scroll">
+            <div class="records-grid">
+                <div class="records-header">
+                    <div class="records-cell">Date</div>
+                    <div class="records-cell">Time</div>
+                    <div class="records-cell">Block 1</div>
+                    <div class="records-cell">Block 2</div>
+                    <div class="records-cell">Block 3</div>
+                    <div class="records-cell">Block 4</div>
+                </div>
+                <div id="recordRows"><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|09:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|09:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|09:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|09:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|09:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|09:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|09:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|09:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|09:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|09:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|09:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|09:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|10:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|10:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|10:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|10:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|10:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|10:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|10:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|10:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|10:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|10:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|10:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|10:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|11:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|11:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|11:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|11:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|11:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|11:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|11:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|11:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|11:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|11:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|11:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|11:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|12:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|12:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|12:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|12:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|12:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|12:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|12:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|12:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|12:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|12:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|12:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|12:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|13:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|13:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|13:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|13:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|13:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|13:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|13:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|13:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|13:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|13:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|13:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|13:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|14:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|14:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|14:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|14:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|14:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|14:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|14:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|14:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">14/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-14|14:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-14|14:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-14|14:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-14|14:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|09:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|09:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|09:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|09:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|09:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|09:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|09:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|09:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|09:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|09:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|09:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|09:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|10:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|10:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|10:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|10:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|10:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|10:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|10:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|10:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|10:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|10:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|10:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|10:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|11:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|11:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|11:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|11:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|11:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|11:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|11:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|11:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|11:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|11:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|11:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|11:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|12:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|12:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|12:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|12:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|12:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|12:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|12:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|12:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|12:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|12:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|12:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|12:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|13:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|13:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|13:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|13:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|13:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|13:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|13:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|13:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|13:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|13:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|13:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|13:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|14:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|14:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|14:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|14:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|14:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|14:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|14:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|14:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">15/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-15|14:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-15|14:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-15|14:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-15|14:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|09:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|09:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|09:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|09:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|09:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|09:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|09:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|09:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|09:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|09:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|09:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|09:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|10:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|10:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|10:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|10:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|10:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|10:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|10:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|10:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">10:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|10:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|10:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|10:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|10:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:00 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|11:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|11:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|11:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|11:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:20 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|11:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|11:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|11:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|11:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">11:40 AM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|11:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|11:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|11:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|11:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|12:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|12:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|12:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|12:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|12:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|12:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|12:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|12:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">12:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|12:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|12:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|12:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|12:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|13:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|13:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|13:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|13:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|13:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|13:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|13:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|13:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">01:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|13:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|13:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|13:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|13:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|14:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|14:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|14:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|14:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|14:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|14:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|14:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|14:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">02:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|14:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|14:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|14:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|14:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">03:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|15:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|15:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|15:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|15:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">03:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|15:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|15:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|15:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|15:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">03:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|15:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|15:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|15:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|15:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">04:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|16:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|16:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|16:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|16:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">04:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|16:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|16:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|16:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|16:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">04:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|16:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|16:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|16:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|16:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">05:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|17:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|17:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|17:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|17:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">05:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|17:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|17:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|17:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|17:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">05:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|17:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|17:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|17:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|17:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">06:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|18:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|18:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|18:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|18:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">06:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|18:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|18:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|18:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|18:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">06:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|18:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|18:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|18:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|18:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">07:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|19:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|19:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|19:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|19:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">07:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|19:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|19:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|19:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|19:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">07:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|19:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|19:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|19:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|19:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">08:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|20:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|20:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|20:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|20:00_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">08:20 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|20:20_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|20:20_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|20:20_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|20:20_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">08:40 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|20:40_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|20:40_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|20:40_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|20:40_block4" maxlength="8" value=""></div>
+                </div><div class="records-row">
+                    <div class="records-cell" data-label="Date">17/04/2026</div>
+                    <div class="records-cell" data-label="Time">09:00 PM</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="2026-04-17|21:00_block1" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="2026-04-17|21:00_block2" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="2026-04-17|21:00_block3" maxlength="8" value=""></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="2026-04-17|21:00_block4" maxlength="8" value=""></div>
+                </div></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared-sync.js"></script>
+    <script>
+        const sharedReady = (window.SharedStateSync && typeof window.SharedStateSync.init === 'function') ?
+            window.SharedStateSync.init().catch((error) => {
+                console.warn('Shared sync init failed:', error);
+            }) :
+            Promise.resolve();
+
+        function formatDateDisplay(dateString) {
+            const parts = dateString.split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateString;
+        }
+
+        function formatTimeDisplay(time24) {
+            const parts = time24.split(':');
+            if (parts.length !== 2) return time24;
+            let hour = Number(parts[0]);
+            const minute = parts[1];
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            if (hour === 0) hour = 12;
+            return `${String(hour).padStart(2, '0')}:${minute} ${ampm}`;
+        }
+
+        function getRecordUsers() {
+            const stored = localStorage.getItem('lotteryRecordUsers');
+            if (!stored) {
+                return {
+                    counter1: 'counter1',
+                    counter2: 'counter2',
+                    counter3: 'counter3',
+                };
+            }
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed && typeof parsed === 'object') return parsed;
+            } catch (e) {
+                console.error(e);
+            }
+            return {};
+        }
+
+        function getSortedResultRows() {
+            const raw = localStorage.getItem('lotteryResults');
+            const data = raw ? JSON.parse(raw) : {};
+            const rows = [];
+
+            Object.entries(data).forEach(([date, slots]) => {
+                Object.keys(slots).forEach((time) => {
+                    rows.push({
+                        date,
+                        time,
+                        key: `${date}|${time}`
+                    });
+                });
+            });
+
+            rows.sort((a, b) => {
+                const d = a.date.localeCompare(b.date);
+                if (d !== 0) return d;
+                return a.time.localeCompare(b.time);
+            });
+
+            return rows;
+        }
+
+        function getUserRecords(username) {
+            const key = `lotteryRecordData_${username}`;
+            const raw = localStorage.getItem(key);
+            if (!raw) return {};
+            try {
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                console.error(e);
+                return {};
+            }
+        }
+
+        function saveUserRecords(username, data) {
+            localStorage.setItem(`lotteryRecordData_${username}`, JSON.stringify(data));
+        }
+
+        function getAllRecordData() {
+            return Object.keys(localStorage)
+                .filter((key) => key.startsWith('lotteryRecordData_'))
+                .map((key) => ({
+                    user: key.replace('lotteryRecordData_', ''),
+                    data: getUserRecords(key.replace('lotteryRecordData_', '')),
+                }));
+        }
+
+        async function loginPortalUser() {
+            await sharedReady;
+
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+            const loginMsg = document.getElementById('loginMsg');
+
+            loginMsg.textContent = '';
+
+            if (!username || !password) {
+                loginMsg.textContent = 'Enter username and password.';
+                return;
+            }
+
+            if (username.toLowerCase() === 'admin' && password === 'admin123') {
+                localStorage.setItem('lotteryRecordSessionUser', JSON.stringify({
+                    username: 'admin',
+                    role: 'admin',
+                }));
+                showRecords();
+                return;
+            }
+
+            const users = getRecordUsers();
+            if (users[username] && users[username] === password) {
+                localStorage.setItem('lotteryRecordSessionUser', JSON.stringify({
+                    username,
+                    role: 'counter',
+                }));
+                showRecords();
+                return;
+            }
+
+            loginMsg.textContent = 'Invalid username or password.';
+        }
+
+        function logoutRecordUser() {
+            localStorage.removeItem('lotteryRecordSessionUser');
+            document.getElementById('recordsSection').classList.add('hidden');
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginMsg').textContent = '';
+        }
+
+        function renderRecordRows(username) {
+            const rowsNode = document.getElementById('recordRows');
+            rowsNode.innerHTML = '';
+
+            const resultRows = getSortedResultRows();
+            const userData = getUserRecords(username);
+
+            if (resultRows.length === 0) {
+                rowsNode.innerHTML = '<div class="records-row"><div class="records-cell" data-label="Info">No result rows available yet.</div></div>';
+                return;
+            }
+
+            resultRows.forEach((row) => {
+                const entry = userData[row.key] || {
+                    block1: '',
+                    block2: '',
+                    block3: '',
+                    block4: '',
+                };
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'records-row';
+                wrapper.innerHTML = `
+                    <div class="records-cell" data-label="Date">${formatDateDisplay(row.date)}</div>
+                    <div class="records-cell" data-label="Time">${formatTimeDisplay(row.time)}</div>
+                    <div class="records-cell" data-label="Block 1"><input class="record-input" id="${row.key}_block1" maxlength="8" value="${entry.block1 || ''}"></div>
+                    <div class="records-cell" data-label="Block 2"><input class="record-input" id="${row.key}_block2" maxlength="8" value="${entry.block2 || ''}"></div>
+                    <div class="records-cell" data-label="Block 3"><input class="record-input" id="${row.key}_block3" maxlength="8" value="${entry.block3 || ''}"></div>
+                    <div class="records-cell" data-label="Block 4"><input class="record-input" id="${row.key}_block4" maxlength="8" value="${entry.block4 || ''}"></div>
+                `;
+                rowsNode.appendChild(wrapper);
+            });
+        }
+
+        function renderAdminDashboard() {
+            const body = document.getElementById('adminRecordRows');
+            body.innerHTML = '';
+
+            const allRows = getSortedResultRows();
+            const allUsers = getAllRecordData();
+
+            if (allRows.length === 0 || allUsers.length === 0) {
+                body.innerHTML = '<tr><td colspan="7" class="records-cell">No admin data available.</td></tr>';
+                return;
+            }
+
+            allUsers.forEach((userPack) => {
+                allRows.forEach((row) => {
+                    const rowData = userPack.data[row.key] || {
+                        block1: '',
+                        block2: '',
+                        block3: '',
+                        block4: '',
+                    };
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${userPack.user}</td>
+                        <td>${formatDateDisplay(row.date)}</td>
+                        <td>${formatTimeDisplay(row.time)}</td>
+                        <td>${rowData.block1 || '--'}</td>
+                        <td>${rowData.block2 || '--'}</td>
+                        <td>${rowData.block3 || '--'}</td>
+                        <td>${rowData.block4 || '--'}</td>
+                    `;
+                    body.appendChild(tr);
+                });
+            });
+        }
+
+        function saveRecordInputs() {
+            const sessionRaw = localStorage.getItem('lotteryRecordSessionUser');
+            if (!sessionRaw) {
+                alert('Session expired. Please login again.');
+                return;
+            }
+
+            const session = JSON.parse(sessionRaw);
+            if (session.role !== 'counter') {
+                alert('Admin view is read-only on record page.');
+                return;
+            }
+
+            const rows = getSortedResultRows();
+            const next = {};
+
+            function getFieldValue(id) {
+                const node = document.getElementById(id);
+                return node ? node.value.trim() : '';
+            }
+
+            rows.forEach((row) => {
+                const key = row.key;
+                next[key] = {
+                    block1: getFieldValue(`${key}_block1`),
+                    block2: getFieldValue(`${key}_block2`),
+                    block3: getFieldValue(`${key}_block3`),
+                    block4: getFieldValue(`${key}_block4`),
+                };
+            });
+
+            saveUserRecords(session.username, next);
+            alert('Record data saved.');
+        }
+
+        async function showRecords() {
+            await sharedReady;
+
+            const sessionRaw = localStorage.getItem('lotteryRecordSessionUser');
+            if (!sessionRaw) {
+                return;
+            }
+
+            const session = JSON.parse(sessionRaw);
+            const isAdmin = session.role === 'admin';
+
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('recordsSection').classList.remove('hidden');
+
+            document.getElementById('welcomeText').textContent = isAdmin ?
+                'Admin mode: all counters chart.' :
+                `Logged in as ${session.username}.`;
+
+            document.getElementById('adminDashboard').classList.toggle('hidden', !isAdmin);
+            document.getElementById('refreshAdminBtn').classList.toggle('hidden', !isAdmin);
+            document.getElementById('recordSaveBtn').classList.toggle('hidden', isAdmin);
+            document.getElementById('userRecordsWrap').classList.toggle('hidden', isAdmin);
+
+            if (isAdmin) {
+                renderAdminDashboard();
+            } else {
+                renderRecordRows(session.username);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async() => {
+            await sharedReady;
+
+            const sessionRaw = localStorage.getItem('lotteryRecordSessionUser');
+            if (sessionRaw) {
+                try {
+                    await showRecords();
+                } catch (e) {
+                    console.error(e);
+                    logoutRecordUser();
+                }
+            }
+        });
+    </script>
+
+
+</body>
+```
+
+Full Computed CSS:
+```css
+
+/* Matched Rule from user-agent */
+body {
+  display: block;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+}
+
+/* Matched Rule from regular */
+* {
+  box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Matched Rule from regular */
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  padding: clamp(0.65rem, 2vw, 1rem);
+  line-height: 1.4;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  color: var(--text-main);
+  padding-top: clamp(0.65rem, 2vw, 1rem);
+  padding-right: clamp(0.65rem, 2vw, 1rem);
+  padding-bottom: clamp(0.65rem, 2vw, 1rem);
+  padding-left: clamp(0.65rem, 2vw, 1rem);
+  line-height: 1.4;
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+html {
+  display: block;
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+:root {
+  view-transition-name: root;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+* {
+  box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+:root {
+  --bg-main: #f0dc2e;
+  --bg-card: #111;
+  --bg-card-soft: #222;
+  --bg-card-muted: #2d2d2d;
+  --border-main: #f5df21;
+  --text-main: #f8e93f;
+  --text-dark: #151515;
+  --text-soft: #ffdf64;
+  --danger: #ff8787;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.25rem;
+  --bg-main: #f0dc2e;
+  --bg-card: #111;
+  --bg-card-soft: #222;
+  --bg-card-muted: #2d2d2d;
+  --border-main: #f5df21;
+  --text-main: #f8e93f;
+  --text-dark: #151515;
+  --text-soft: #ffdf64;
+  --danger: #ff8787;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.25rem;
+}
+
+```
