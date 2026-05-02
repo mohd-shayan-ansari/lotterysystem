@@ -109,6 +109,9 @@ function setAdminPassword(password) {
 
 let isAdminAuthenticated = false;
 
+// Day visibility cache (stores which dates have results visible)
+let dayVisibilityCache = {}; // Format: { 'YYYY-MM-DD': true/false }
+
 // ================================
 // DATABASE FUNCTIONS (SUPABASE)
 // ================================
@@ -144,22 +147,26 @@ async function fetchLotteryResultsFromDB() {
             try {
                 const { data, error } = await supabaseClient
                     .from('lottery_results')
-                    .select('date,time,andar,result,bahar,is_confirmed');
+                    .select('date,time,andar,result,bahar,is_confirmed,is_day_visible');
 
                 if (error) {
                     console.warn('supabase-js select error, falling back to REST:', error.message || error);
                 } else if (data) {
                     const cache = {};
+                    const visibility = {};
                     data.forEach(row => {
                         if (!cache[row.date]) cache[row.date] = {};
                         cache[row.date][row.time] = {
                             andar: row.andar,
                             result: row.result,
                             bahar: row.bahar,
-                            is_confirmed: row.is_confirmed
+                            is_confirmed: row.is_confirmed,
+                            is_day_visible: row.is_day_visible !== false
                         };
+                        visibility[row.date] = row.is_day_visible !== false;
                     });
                     lotteryResultsCache = cache;
+                    dayVisibilityCache = visibility;
                     return cache;
                 }
             } catch (e) {
@@ -169,7 +176,7 @@ async function fetchLotteryResultsFromDB() {
 
         // Fallback: call Supabase REST endpoint directly with public key headers to avoid 401
         try {
-            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,andar,result,bahar,is_confirmed`;
+            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,andar,result,bahar,is_confirmed,is_day_visible`;
             const res = await fetch(url, {
                 headers: {
                     'apikey': SUPABASE_PUBLIC_KEY,
@@ -185,16 +192,20 @@ async function fetchLotteryResultsFromDB() {
 
             const data = await res.json();
             const cache = {};
+            const visibility = {};
             data.forEach(row => {
                 if (!cache[row.date]) cache[row.date] = {};
                 cache[row.date][row.time] = {
                     andar: row.andar,
                     result: row.result,
                     bahar: row.bahar,
-                    is_confirmed: row.is_confirmed
+                    is_confirmed: row.is_confirmed,
+                    is_day_visible: row.is_day_visible !== false
                 };
+                visibility[row.date] = row.is_day_visible !== false;
             });
             lotteryResultsCache = cache;
+            dayVisibilityCache = visibility;
             return cache;
         } catch (e) {
             console.error('REST fetch exception:', e);
@@ -308,7 +319,8 @@ async function updateLotteryResultInDB(date, time, andar, result, bahar) {
             andar,
             result,
             bahar,
-            is_confirmed: true
+            is_confirmed: true,
+            is_day_visible: dayVisibilityCache[date] !== false
         };
 
         console.log(`✅ Updated result for ${date} ${time}: ${result}`);
@@ -317,6 +329,112 @@ async function updateLotteryResultInDB(date, time, andar, result, bahar) {
         console.error('Exception updating result:', e);
         return false;
     }
+}
+
+// Fetch day visibility status from database
+async function fetchDayVisibilityFromDB() {
+    try {
+        initSupabaseClient();
+
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('lottery_results')
+                    .select('date,is_day_visible')
+                    .neq('is_day_visible', null);
+
+                if (error) {
+                    console.warn('Error fetching visibility:', error.message);
+                } else if (data) {
+                    const visibility = {};
+                    data.forEach(row => {
+                        visibility[row.date] = row.is_day_visible !== false;
+                    });
+                    dayVisibilityCache = visibility;
+                    return visibility;
+                }
+            } catch (e) {
+                console.warn('Fetch visibility failed:', e);
+            }
+        }
+        return dayVisibilityCache;
+    } catch (e) {
+        console.error('Exception fetching visibility:', e);
+        return dayVisibilityCache;
+    }
+}
+
+// Toggle day visibility via RPC
+async function toggleDayVisibility() {
+    try {
+        initSupabaseClient();
+        if (!supabaseClient) {
+            alert('Supabase not initialized');
+            return false;
+        }
+
+        const selectedDate = getSelectedAdminDate();
+        if (!selectedDate) {
+            alert('Please select a date first');
+            return false;
+        }
+
+        const adminPassword = getAdminPassword();
+        const currentVisibility = dayVisibilityCache[selectedDate] !== false;
+        const newVisibility = !currentVisibility;
+
+        const { error } = await supabaseClient.rpc('set_day_visibility', {
+            p_date: selectedDate,
+            p_is_visible: newVisibility,
+            p_password: adminPassword
+        });
+
+        if (error) {
+            alert('Error toggling visibility: ' + error.message);
+            console.error('RPC error:', error);
+            return false;
+        }
+
+        // Update local cache
+        dayVisibilityCache[selectedDate] = newVisibility;
+        if (lotteryResultsCache[selectedDate]) {
+            Object.keys(lotteryResultsCache[selectedDate]).forEach((time) => {
+                lotteryResultsCache[selectedDate][time].is_day_visible = newVisibility;
+            });
+        }
+        updateVisibilityButtonUI(selectedDate);
+        if (typeof filterResults === 'function') {
+            filterResults();
+        }
+        if (typeof populateStoredDataPreview === 'function') {
+            populateStoredDataPreview();
+        }
+        console.log(`✅ Day ${selectedDate} visibility set to: ${newVisibility}`);
+        return true;
+    } catch (e) {
+        console.error('Exception toggling visibility:', e);
+        alert('Error: ' + e.message);
+        return false;
+    }
+}
+
+// Update visibility button UI based on current state
+function updateVisibilityButtonUI(date) {
+    const btn = document.getElementById('dayVisibilityToggle');
+    if (!btn) return;
+
+    const isVisible = dayVisibilityCache[date] !== false;
+    btn.textContent = isVisible ? '🟢 ON' : '🔴 OFF';
+    btn.style.backgroundColor = isVisible ? '#57e06d' : '#d35858';
+}
+
+// Initialize/update visibility for a selected admin date
+async function updateVisibilityUIForDate(date) {
+    // If not in cache yet, load from DB
+    if (!(date in dayVisibilityCache)) {
+        await fetchDayVisibilityFromDB();
+    }
+    updateVisibilityButtonUI(date);
 }
 
 // Initialize today's date with random numbers for all time slots
@@ -470,6 +588,8 @@ function syncAdminTimeToDate() {
 }
 
 function handleAdminDateChange() {
+    const selectedDate = getSelectedAdminDate();
+    updateVisibilityUIForDate(selectedDate);
     populateStoredDataPreview();
 }
 
@@ -481,6 +601,7 @@ function getStoredNumber(dataStore, date, time) {
             andar: cached.andar || '--',
             result: cached.result || '--',
             bahar: cached.bahar || '--',
+            is_day_visible: cached.is_day_visible !== false,
         };
     }
 
@@ -495,6 +616,7 @@ function getStoredNumber(dataStore, date, time) {
             andar: '--',
             result: slotValue,
             bahar: '--',
+            is_day_visible: dayVisibilityCache[date] !== false,
         };
     }
 
@@ -502,6 +624,7 @@ function getStoredNumber(dataStore, date, time) {
         andar: slotValue.andar || '--',
         result: slotValue.result || '--',
         bahar: slotValue.bahar || '--',
+        is_day_visible: slotValue.is_day_visible !== false,
     };
 }
 
@@ -734,6 +857,7 @@ class LotteryData {
                     result: resultToShow,
                     bahar: baharToShow,
                     isUpcoming,
+                    is_day_visible: (storedSlot && storedSlot.is_day_visible !== false) && dayVisibilityCache[date] !== false,
                 });
             });
             current.setDate(current.getDate() + 1);
@@ -809,12 +933,17 @@ function renderTable(results) {
     const tbody = document.getElementById('resultsTable');
     tbody.innerHTML = '';
 
-    if (results.length === 0) {
+    // Filter out results from hidden days
+    const visibleResults = results.filter(result => {
+        return result.is_day_visible !== false;
+    });
+
+    if (visibleResults.length === 0) {
         tbody.innerHTML = '<tr class="table-row-odd"><td colspan="5" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
         return;
     }
 
-    results.forEach((result, index) => {
+    visibleResults.forEach((result, index) => {
         const row = document.createElement('tr');
         const rowClass = index % 2 === 0 ? 'table-row-odd' : 'table-row-even';
 
@@ -1338,12 +1467,15 @@ function initializeDashboard() {
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
 
-    // Fetch lottery results from database on initialization
+    // Fetch lottery results and visibility from database on initialization
     (async() => {
         console.log('📥 Loading lottery results from database...');
 
         // Fetch existing results
         await fetchLotteryResultsFromDB();
+
+        // Fetch day visibility settings
+        await fetchDayVisibilityFromDB();
 
         // Auto-generate results for today and next 7 days if they don't exist
         await autoGenerateInitialResults();
@@ -1371,6 +1503,7 @@ window.reloadLotteryResults = function() {
     // Fetch from database
     (async() => {
         await fetchLotteryResultsFromDB();
+        await fetchDayVisibilityFromDB();
 
         // Refresh the UI
         if (typeof filterResults === 'function') {

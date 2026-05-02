@@ -545,10 +545,14 @@
             <!-- Date-based Stored Data -->
             <div class="mb-6 p-4 rounded" style="background-color: #2d2d2d; border: 1px solid #FFFF00;">
                 <label class="block font-bold mb-2">Stored Data Date</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                     <div>
                         <label class="block text-sm mb-1">Date</label>
                         <input type="date" id="adminDate" class="admin-input w-full" onchange="handleAdminDateChange()">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Visibility</label>
+                        <button id="dayVisibilityToggle" class="btn-primary w-full" onclick="toggleDayVisibility()" title="Toggle visibility for selected day">🟢 ON</button>
                     </div>
                     <div>
                         <label class="block text-sm mb-1">&nbsp;</label>
@@ -647,7 +651,7 @@
                 }
 
                 const appScript = document.createElement('script');
-                appScript.src = 'app.js?v=20260430-02';
+                appScript.src = 'app.js?v=20260502-03';
                 document.body.appendChild(appScript);
             };
 
