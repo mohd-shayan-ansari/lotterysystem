@@ -53,7 +53,7 @@ const TIME_SLOTS = generateTimeSlots();
 
 function generateTimeSlots() {
     const slots = [];
-    const endMinutes = (22 * 60) + 40;
+    const endMinutes = 21 * 60;
     let currentMinutes = 9 * 60;
 
     while (currentMinutes <= endMinutes) {
@@ -62,9 +62,7 @@ function generateTimeSlots() {
         const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
         slots.push(timeStr);
 
-        // Use 15-minute intervals from 09:00 to 10:45, then 20-minute intervals from 11:00 onward.
-        const interval = currentMinutes < (11 * 60) ? 15 : 20;
-        currentMinutes += interval;
+        currentMinutes += 30;
     }
 
     return slots;
@@ -939,19 +937,13 @@ function renderTable(results) {
     });
 
     if (visibleResults.length === 0) {
-        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="5" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
+        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="4" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
         return;
     }
 
     visibleResults.forEach((result, index) => {
         const row = document.createElement('tr');
         const rowClass = index % 2 === 0 ? 'table-row-odd' : 'table-row-even';
-
-        const dateCell = document.createElement('td');
-        dateCell.setAttribute('data-label', 'Date');
-        dateCell.textContent = formatDateDisplay(result.date);
-        dateCell.className = 'table-cell-date-time';
-        row.appendChild(dateCell);
 
         const timeCell = document.createElement('td');
         timeCell.setAttribute('data-label', 'Time');
@@ -1021,6 +1013,12 @@ function filterResults() {
 
     const results = lotteryData.getByDateRange(startDate, endDate);
     renderTable(results);
+
+    const titleElem = document.getElementById('resultsTableTitle');
+    if (titleElem) {
+        const fmt = (d) => { const p = d.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d; };
+        titleElem.textContent = startDate === endDate ? fmt(startDate) : `${fmt(startDate)} to ${fmt(endDate)}`;
+    }
 }
 
 function resetFilter() {

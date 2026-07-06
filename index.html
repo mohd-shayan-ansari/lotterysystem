@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
          :root {
-            --bg-main: #f0dc2e;
+            --bg-main: #006400;
             --bg-card: #121212;
             --bg-card-soft: #222;
             --bg-card-muted: #2f2f2f;
@@ -483,7 +483,7 @@
 
     <!-- Show Result Section -->
     <div class="bg-black rounded-lg mb-6 p-4 border-2 show-result-card" style="border-color: #FFFF00;">
-        <div class="section-title mb-4">RATAN MATKA</div>
+        <div class="section-title mb-4 text-center">RATAN MATKA</div>
         <div class="grid gap-3 items-end filter-grid">
             <div>
                 <label class="block field-label">Start Date</label>
@@ -502,15 +502,14 @@
 
     <!-- Results Table -->
     <div class="bg-black rounded-lg p-4 md:p-6 border-2 shadow-lg" style="border-color: #FFFF00;">
-        <div class="section-title mb-4">📊 Results Table</div>
+        <div class="section-title mb-4 text-center" id="resultsTableTitle">current date selected</div>
         <div class="scrollable-table">
             <table class="results-table">
                 <thead>
                     <tr class="table-header">
-                        <th>Date</th>
                         <th>Time</th>
                         <th>Andar</th>
-                        <th>Result</th>
+                        <th>Matka Result</th>
                         <th>Bahar</th>
                     </tr>
                 </thead>
@@ -523,7 +522,7 @@
 
     <!-- Bottom Fortune Card -->
     <div class="header rounded-lg mt-6 p-4 shadow-lg footer-fortune">
-        <h1 class="text-2xl md:text-4xl font-bold leading-tight" style="color: #FFFF00;">🎰 Test Your Fortune</h1>
+        <h1 class="text-2xl md:text-4xl font-bold leading-tight" style="color: #FFFF00;">Test Your Fortune</h1>
         <p class="text-gray-400 mt-1 header-caption">Check your lucky numbers</p>
         <p class="copyright-note">Copyright <button type="button" class="copyright-year-btn" onclick="openAdminAuthModal()">2026</button></p>
     </div>

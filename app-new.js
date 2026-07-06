@@ -57,7 +57,7 @@ function generateTimeSlots() {
     const startMinute = 0;
     const endHour = 21;
     const endMinute = 0;
-    const interval = 20; // 20 minutes interval
+    const interval = 30; // 30 minutes interval
 
     let currentHour = startHour;
     let currentMinute = startMinute;
@@ -186,7 +186,7 @@ function renderTable(results) {
     tbody.innerHTML = '';
 
     if (results.length === 0) {
-        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="3" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
+        tbody.innerHTML = '<tr class="table-row-odd"><td colspan="2" style="text-align: center; padding: 20px;">No results found for the selected date range.</td></tr>';
         updateRecordCount(0);
         return;
     }
@@ -195,11 +195,6 @@ function renderTable(results) {
         const row = document.createElement('tr');
         const rowClass = index % 2 === 0 ? 'table-row-odd' : 'table-row-even';
         row.className = rowClass;
-
-        // Date cell
-        const dateCell = document.createElement('td');
-        dateCell.textContent = result.date;
-        row.appendChild(dateCell);
 
         // Time cell
         const timeCell = document.createElement('td');
@@ -246,6 +241,12 @@ function filterResults() {
 
     const results = lotteryData.getByDateRange(startDate, endDate);
     renderTable(results);
+
+    const titleElem = document.getElementById('resultsTableTitle');
+    if (titleElem) {
+        const fmt = (d) => { const p = d.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d; };
+        titleElem.textContent = startDate === endDate ? fmt(startDate) : `${fmt(startDate)} to ${fmt(endDate)}`;
+    }
 }
 
 function resetFilter() {
@@ -253,6 +254,10 @@ function resetFilter() {
     document.getElementById('endDate').value = '';
     renderTable([]);
     updateRecordCount(0);
+    const titleElem = document.getElementById('resultsTableTitle');
+    if (titleElem) {
+        titleElem.textContent = '📊 current date selected';
+    }
 }
 
 // ================================
