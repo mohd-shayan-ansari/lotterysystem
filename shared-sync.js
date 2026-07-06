@@ -7,9 +7,7 @@
 
     // Keep shared sync limited to true shared settings only.
     // Lottery results now live in Supabase rows and should not be mirrored through localStorage hooks.
-    const SHARED_KEYS = new Set([
-        'lotteryAdminPassword',
-    ]);
+    const SHARED_KEYS = new Set([]);
     const SHARED_PREFIXES = [];
 
     let initialized = false;

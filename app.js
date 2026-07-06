@@ -758,9 +758,26 @@ function updateAdminPassword() {
         return;
     }
 
-    setAdminPassword(newPassword);
-    alert('Admin password updated successfully.');
-    resetAdminPasswordForm();
+    initSupabaseClient();
+    if (supabaseClient) {
+        supabaseClient.rpc('update_state', {
+            p_key: 'lotteryAdminPassword',
+            p_value: newPassword,
+            p_password: currentPassword
+        }).then(({ error }) => {
+            if (error) {
+                alert('Failed to update password in database: ' + error.message);
+            } else {
+                setAdminPassword(newPassword);
+                alert('Admin password updated successfully in the database!');
+                resetAdminPasswordForm();
+            }
+        });
+    } else {
+        setAdminPassword(newPassword);
+        alert('Admin password updated locally.');
+        resetAdminPasswordForm();
+    }
 }
 
 // ================================
