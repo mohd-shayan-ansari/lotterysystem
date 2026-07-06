@@ -16,5 +16,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`\n✅ Server running at http://localhost:${PORT}`);
     console.log(`\n📝 Admin Panel: Click the copyright year (2026) at the bottom`);
-    console.log(`🔐 Default Admin Password: admin123\n`);
+    console.log(`🔐 Default Admin Password: matka123ratan\n`);
 });

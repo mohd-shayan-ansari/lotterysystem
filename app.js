@@ -98,7 +98,7 @@ function saveConfirmedNumbers() {
 
 function getAdminPassword() {
     const stored = localStorage.getItem('lotteryAdminPassword');
-    return stored && stored.trim() ? stored : 'admin123';
+    return stored && stored.trim() ? stored : 'matka123ratan';
 }
 
 function setAdminPassword(password) {
@@ -117,9 +117,9 @@ let dayVisibilityCache = {}; // Format: { 'YYYY-MM-DD': true/false }
 let supabaseClient = null;
 let lotteryResultsCache = {}; // Cache for lottery results
 // Supabase REST fallback config (used when client/session has auth issues)
-const SUPABASE_REST_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co/rest/v1';
-const SUPABASE_PROJECT_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co';
-const SUPABASE_PUBLIC_KEY = 'sb_publishable_Z6-LzeuJcuuL7MvFZCzUJg_mcXOiT_T';
+const SUPABASE_REST_URL = 'https://trgbzycoifdprfixkgai.supabase.co/rest/v1';
+const SUPABASE_PROJECT_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
+const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
 // Inline editing state for admin table cells
 const inlineEditState = {}; // key => { isEditing, currentValue, originalValue }
 
@@ -129,8 +129,8 @@ function initSupabaseClient() {
 
     // Check if Supabase was loaded by shared-sync.js
     if (window.supabase) {
-        const SUPABASE_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_Z6-LzeuJcuuL7MvFZCzUJg_mcXOiT_T';
+        const SUPABASE_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 }

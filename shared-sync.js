@@ -1,6 +1,6 @@
 (function(global) {
-    const SUPABASE_URL = 'https://cdjhnkpzyefdsslbtnof.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Z6-LzeuJcuuL7MvFZCzUJg_mcXOiT_T';
+    const SUPABASE_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
 
     // Create Supabase client
     const supabase = global.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -18,7 +18,7 @@
     let originalRemoveItem = null;
 
     // Keep track of the current valid admin password to authorize RPC calls
-    let currentAuthPassword = 'admin123'; // default fallback
+    let currentAuthPassword = 'matka123ratan'; // default fallback
 
     function isSharedKey(key) {
         if (SHARED_KEYS.has(key)) return true;
