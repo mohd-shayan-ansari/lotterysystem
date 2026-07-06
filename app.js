@@ -92,13 +92,13 @@ function loadConfirmedNumbers() {
     return stored ? JSON.parse(stored) : {};
 }
 
-function saveConfirmedNumbers() {
-    localStorage.setItem('lotteryConfirmedResults', JSON.stringify(confirmedNumbers));
-}
-
 function getAdminPassword() {
+    if (window.SharedStateSync && typeof window.SharedStateSync.getPassword === 'function') {
+        const syncPwd = window.SharedStateSync.getPassword();
+        if (syncPwd) return syncPwd;
+    }
     const stored = localStorage.getItem('lotteryAdminPassword');
-    return stored && stored.trim() ? stored : 'matka123ratan';
+    return stored && stored.trim() ? stored : '';
 }
 
 function setAdminPassword(password) {
