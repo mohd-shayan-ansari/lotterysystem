@@ -1118,17 +1118,34 @@ function submitAdminPassword(event) {
     }
 
     const enteredPassword = passwordInput.value;
-    if (enteredPassword !== getAdminPassword()) {
-        alert('Incorrect code.');
-        passwordInput.focus();
-        passwordInput.select();
-        return;
-    }
+    
+    // Save locally so the Supabase client can use it
+    setAdminPassword(enteredPassword);
 
-    isAdminAuthenticated = true;
-    window.isAdminAuthenticated = true;
-    closeAdminAuthModal();
-    toggleAdminPanel();
+    initSupabaseClient();
+    if (supabaseClient) {
+        // Try a harmless operation to verify the password securely with the database
+        supabaseClient.rpc('update_state', {
+            p_key: 'last_login',
+            p_value: new Date().toISOString(),
+            p_password: enteredPassword
+        }).then(({ error }) => {
+            if (error) {
+                alert('Incorrect code.');
+                setAdminPassword(''); // Clear the wrong password
+                passwordInput.value = '';
+                passwordInput.focus();
+            } else {
+                isAdminAuthenticated = true;
+                window.isAdminAuthenticated = true;
+                closeAdminAuthModal();
+                toggleAdminPanel();
+                passwordInput.value = '';
+            }
+        });
+    } else {
+        alert('Database connection failed.');
+    }
 }
 
 function updateRealTimeClock() {
