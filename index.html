@@ -483,15 +483,15 @@
 
     <!-- Show Result Section -->
     <div class="bg-black rounded-lg mb-6 p-4 border-2 show-result-card" style="border-color: #FFFF00;">
-        <div class="section-title mb-4 text-center">RATAN MATKA</div>
+        <div class="mb-4 text-center font-extrabold" style="font-size: clamp(2.5rem, 6vw, 4rem); color: #d1c852; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">RATAN MATKA</div>
         <div class="grid gap-3 items-end filter-grid">
             <div>
                 <label class="block field-label">Start Date</label>
-                <input type="date" id="startDate" class="input-date w-full" value="">
+                <input type="date" id="startDate" class="input-date w-full" value="" min="1996-01-01">
             </div>
             <div>
                 <label class="block field-label">End Date</label>
-                <input type="date" id="endDate" class="input-date w-full" value="">
+                <input type="date" id="endDate" class="input-date w-full" value="" min="1996-01-01">
             </div>
             <div class="filter-actions">
                 <button class="btn-primary" onclick="filterResults()">Go</button>
@@ -547,7 +547,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                     <div>
                         <label class="block text-sm mb-1">Date</label>
-                        <input type="date" id="adminDate" class="admin-input w-full" onchange="handleAdminDateChange()">
+                        <input type="date" id="adminDate" class="admin-input w-full" onchange="handleAdminDateChange()" min="1996-01-01">
                     </div>
                     <div>
                         <label class="block text-sm mb-1">Visibility</label>

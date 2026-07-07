@@ -586,43 +586,40 @@ function syncAdminTimeToDate() {
 }
 
 function handleAdminDateChange() {
+    let dateInput = document.getElementById('adminDate');
+    if (dateInput && dateInput.value && dateInput.value < '1996-01-01') {
+        alert('Records are only available from year 1996 onwards.');
+        dateInput.value = '1996-01-01';
+    }
     const selectedDate = getSelectedAdminDate();
     updateVisibilityUIForDate(selectedDate);
     populateStoredDataPreview();
 }
 
 function getStoredNumber(dataStore, date, time) {
-    // First try database cache
+    // ONLY use database cache to ensure consistency across devices
     if (lotteryResultsCache[date] && lotteryResultsCache[date][time]) {
         const cached = lotteryResultsCache[date][time];
-        return {
-            andar: cached.andar || '--',
-            result: cached.result || '--',
-            bahar: cached.bahar || '--',
-            is_day_visible: cached.is_day_visible !== false,
-        };
+        // Only return if it's confirmed (edited by admin)
+        if (cached.is_confirmed) {
+            return {
+                andar: cached.andar || '--',
+                result: cached.result || '--',
+                bahar: cached.bahar || '--',
+                is_day_visible: cached.is_day_visible !== false,
+            };
+        }
     }
 
-    // Fallback to passed dataStore
-    if (!dataStore[date] || !dataStore[date][time]) {
-        return null;
-    }
-
-    const slotValue = dataStore[date][time];
-    if (typeof slotValue === 'string') {
-        return {
-            andar: '--',
-            result: slotValue,
-            bahar: '--',
-            is_day_visible: dayVisibilityCache[date] !== false,
-        };
-    }
+    // Auto-generate deterministic seeded result if not edited by admin.
+    // This keeps the unedited results identical across all devices.
+    const seededResult = generateSeededNumber(date, time);
 
     return {
-        andar: slotValue.andar || '--',
-        result: slotValue.result || '--',
-        bahar: slotValue.bahar || '--',
-        is_day_visible: slotValue.is_day_visible !== false,
+        andar: seededResult.charAt(0),
+        result: seededResult,
+        bahar: seededResult.charAt(1),
+        is_day_visible: dayVisibilityCache[date] !== false,
     };
 }
 
@@ -798,29 +795,6 @@ class LotteryData {
         // Ensure the date object exists
         if (!this.data[date]) {
             this.data[date] = {};
-        }
-
-        let changed = false;
-        TIME_SLOTS.forEach((time) => {
-            const key = `${date}|${time}`;
-            // Preserve admin-confirmed results
-            if (confirmedNumbers[key] === true) {
-                return;
-            }
-            // If slot is missing, generate a seeded value and store it
-            if (!this.data[date][time]) {
-                const seededValue = generateSeededNumber(date, time);
-                this.data[date][time] = {
-                    andar: seededValue.charAt(0),
-                    result: seededValue,
-                    bahar: seededValue.charAt(1),
-                };
-                changed = true;
-            }
-        });
-
-        if (changed) {
-            // Persist the entire data object to localStorage, which will sync via shared-sync to Supabase
             this.saveToStorage();
         }
     }
@@ -1008,6 +982,18 @@ function filterResults() {
 
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
+
+    if (startDate && startDate < '1996-01-01') {
+        alert('Results are only available from year 1996 onwards.');
+        startDate = '1996-01-01';
+        document.getElementById('startDate').value = '1996-01-01';
+    }
+    
+    if (endDate && endDate < '1996-01-01') {
+        if (startDate !== '1996-01-01') alert('Results are only available from year 1996 onwards.');
+        endDate = '1996-01-01';
+        document.getElementById('endDate').value = '1996-01-01';
+    }
 
     if (!startDate || !endDate) {
         const today = getLocalDateKey();
@@ -1295,7 +1281,6 @@ function populateStoredDataPreview() {
         return;
     }
 
-    ensureDateHasRandomSlots(selectedDate);
     const dayData = lotteryResultsCache[selectedDate] || {};
 
     let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed;">';
@@ -1307,11 +1292,10 @@ function populateStoredDataPreview() {
                 }, selectedDate, time) || { andar: '--', result: '--', bahar: '--' };
                 const key = `${selectedDate}|${time}`;
                 const isLocked = hasSlotPassed(selectedDate, time);
-                const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : generateRandomNumber();
+                const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : '--';
                 const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
-                const status = isFromDB ?
-                    (lotteryResultsCache[selectedDate][time].is_confirmed ? '✅ DB (Editable)' : '📊 Generated') :
-                    (confirmedNumbers[key] ? '✅ Confirmed (Editable)' : 'Editable');
+                const status = isFromDB && lotteryResultsCache[selectedDate][time].is_confirmed ?
+                    '✅ DB (Editable)' : 'Editable';
                 const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
                 const safeDate = selectedDate.replace(/'/g, "\\'");
                 const safeTime = time.replace(/'/g, "\\'");
@@ -1510,7 +1494,7 @@ function initializeDashboard() {
         await fetchDayVisibilityFromDB();
 
         // Auto-generate results for today and next 7 days if they don't exist
-        await autoGenerateInitialResults();
+        // await autoGenerateInitialResults();
 
         // Reload to display database results
         window.reloadLotteryResults();
