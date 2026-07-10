@@ -67,7 +67,7 @@
         
         .filter-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 220px)) auto;
+            grid-template-columns: minmax(0, 220px) auto;
             gap: 0.6rem;
             justify-content: center;
             align-items: end;
@@ -211,7 +211,7 @@
         th,
         td {
             border: 1px solid var(--border-main);
-            padding: 0.55rem 0.45rem;
+            padding: 0.85rem 0.45rem;
             text-align: center;
             font-size: clamp(0.72rem, 1.45vw, 0.95rem);
             word-break: break-word;
@@ -391,11 +391,11 @@
                 font-size: 1.02rem;
             }
             .filter-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: minmax(0, 1fr) auto;
                 gap: var(--space-2);
             }
             .filter-actions {
-                grid-column: 1 / -1;
+                grid-column: 2;
                 justify-content: center;
             }
             .results-status-given {
@@ -408,10 +408,10 @@
             }
             @media (max-width: 640px) {
                 .filter-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    grid-template-columns: 1fr;
                 }
                 .filter-actions {
-                    grid-column: 1 / -1;
+                    grid-column: 1;
                 }
             }
             .record-count {
@@ -431,7 +431,7 @@
             }
             th,
             td {
-                padding: 0.42rem 0.3rem;
+                padding: 0.65rem 0.3rem;
                 font-size: 0.72rem;
             }
         }
@@ -439,7 +439,7 @@
         @media (max-width: 420px) {
             th,
             td {
-                padding: 0.38rem 0.22rem;
+                padding: 0.55rem 0.22rem;
                 font-size: 0.65rem;
                 line-height: 1.2;
             }
@@ -486,12 +486,8 @@
         <div class="mb-4 text-center font-extrabold" style="font-size: clamp(2.5rem, 6vw, 4rem); color: #d1c852; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">RATAN MATKA</div>
         <div class="grid gap-3 items-end filter-grid">
             <div>
-                <label class="block field-label">Start Date</label>
+                <label class="block field-label">Select Date</label>
                 <input type="date" id="startDate" class="input-date w-full" value="" min="1996-01-01">
-            </div>
-            <div>
-                <label class="block field-label">End Date</label>
-                <input type="date" id="endDate" class="input-date w-full" value="" min="1996-01-01">
             </div>
             <div class="filter-actions">
                 <button class="btn-primary" onclick="filterResults()">Go</button>

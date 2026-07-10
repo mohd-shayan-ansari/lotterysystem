@@ -227,31 +227,24 @@ function updateRecordCount(count) {
 
 function filterResults() {
     const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
 
-    if (!startDate || !endDate) {
-        alert('Please select both Start Date and End Date');
+    if (!startDate) {
+        alert('Please select a Date');
         return;
     }
 
-    if (startDate > endDate) {
-        alert('Start Date cannot be after End Date');
-        return;
-    }
-
-    const results = lotteryData.getByDateRange(startDate, endDate);
+    const results = lotteryData.getByDateRange(startDate, startDate);
     renderTable(results);
 
     const titleElem = document.getElementById('resultsTableTitle');
     if (titleElem) {
         const fmt = (d) => { const p = d.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d; };
-        titleElem.textContent = startDate === endDate ? fmt(startDate) : `${fmt(startDate)} to ${fmt(endDate)}`;
+        titleElem.textContent = fmt(startDate);
     }
 }
 
 function resetFilter() {
     document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
     renderTable([]);
     updateRecordCount(0);
     const titleElem = document.getElementById('resultsTableTitle');
@@ -348,8 +341,7 @@ function saveAdminData() {
 
     // Refresh the main table to show updated confirmed state
     const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    if (startDate && endDate) {
+    if (startDate) {
         filterResults();
     }
 
@@ -398,8 +390,7 @@ function deleteStoredResult(date, time) {
 
         // Refresh the main table
         const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        if (startDate && endDate) {
+        if (startDate) {
             filterResults();
         }
     }
@@ -413,10 +404,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set default date range to today
     const today = new Date().toISOString().split('T')[0];
     const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
 
     if (startDateInput) startDateInput.value = today;
-    if (endDateInput) endDateInput.value = today;
 
     // Initial render with today's data (skeleton table)
     filterResults();

@@ -56,8 +56,7 @@ class LotteryDataFirebase {
             }
             // Trigger table refresh
             const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            if (startDate && endDate) {
+            if (startDate) {
                 filterResults();
             }
         } catch (error) {

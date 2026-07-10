@@ -530,17 +530,13 @@ function parseDateKey(dateKey) {
 
 function applyTodayDateDefaults() {
     const startInput = document.getElementById('startDate');
-    const endInput = document.getElementById('endDate');
-    if (!startInput || !endInput) {
+    if (!startInput) {
         return '';
     }
 
     const today = getLocalDateKey();
     if (!startInput.value) {
         startInput.value = today;
-    }
-    if (!endInput.value) {
-        endInput.value = today;
     }
 
     return today;
@@ -981,53 +977,34 @@ function filterResults() {
     applyTodayDateDefaults();
 
     let startDate = document.getElementById('startDate').value;
-    let endDate = document.getElementById('endDate').value;
 
     if (startDate && startDate < '1996-01-01') {
         alert('Results are only available from year 1996 onwards.');
         startDate = '1996-01-01';
         document.getElementById('startDate').value = '1996-01-01';
     }
-    
-    if (endDate && endDate < '1996-01-01') {
-        if (startDate !== '1996-01-01') alert('Results are only available from year 1996 onwards.');
-        endDate = '1996-01-01';
-        document.getElementById('endDate').value = '1996-01-01';
-    }
 
-    if (!startDate || !endDate) {
+    if (!startDate) {
         const today = getLocalDateKey();
-        if (!startDate) {
-            startDate = today;
-            document.getElementById('startDate').value = today;
-        }
-        if (!endDate) {
-            endDate = today;
-            document.getElementById('endDate').value = today;
-        }
+        startDate = today;
+        document.getElementById('startDate').value = today;
     }
 
-    if (startDate > endDate) {
-        alert('Start Date cannot be after End Date');
-        return;
-    }
+    lotteryData.ensureDateRange(startDate, startDate);
 
-    lotteryData.ensureDateRange(startDate, endDate);
-
-    const results = lotteryData.getByDateRange(startDate, endDate);
+    const results = lotteryData.getByDateRange(startDate, startDate);
     renderTable(results);
 
     const titleElem = document.getElementById('resultsTableTitle');
     if (titleElem) {
         const fmt = (d) => { const p = d.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d; };
-        titleElem.textContent = startDate === endDate ? fmt(startDate) : `${fmt(startDate)} to ${fmt(endDate)}`;
+        titleElem.textContent = fmt(startDate);
     }
 }
 
 function resetFilter() {
     const today = getLocalDateKey();
     document.getElementById('startDate').value = today;
-    document.getElementById('endDate').value = today;
     filterResults();
 }
 
@@ -1263,8 +1240,7 @@ function saveInlineAdminResult(date, time, inputId) {
                 populateStoredDataPreview();
 
                 const startDate = document.getElementById('startDate').value;
-                const endDate = document.getElementById('endDate').value;
-                if (startDate && endDate) {
+                if (startDate) {
                     filterResults();
                 }
             }
@@ -1465,8 +1441,7 @@ function deleteStoredResult(date, time) {
         populateStoredDataPreview();
 
         const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        if (startDate && endDate) {
+        if (startDate) {
             filterResults();
         }
     }
@@ -1481,7 +1456,6 @@ function initializeDashboard() {
     const today = applyTodayDateDefaults() || getLocalDateKey();
     lotteryData.ensureDate(today);
     document.getElementById('startDate').value = today;
-    document.getElementById('endDate').value = today;
 
     // Fetch lottery results and visibility from database on initialization
     (async() => {
