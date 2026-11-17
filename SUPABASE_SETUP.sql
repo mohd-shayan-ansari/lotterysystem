@@ -37,9 +37,23 @@ ALTER TABLE lottery_results DROP COLUMN IF EXISTS result;
 
 CREATE INDEX IF NOT EXISTS idx_lottery_date ON lottery_results(date);
 
--- Enable realtime for both tables
-alter publication supabase_realtime add table shared_state;
-alter publication supabase_realtime add table lottery_results;
+-- Enable realtime safely (skip if already a member to prevent error 42710)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND tablename = 'shared_state'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE shared_state;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND tablename = 'lottery_results'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE lottery_results;
+    END IF;
+END $$;
 
 
 -- 3. Create RPC functions for state management
