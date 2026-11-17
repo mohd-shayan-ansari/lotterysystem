@@ -116,10 +116,10 @@ let dayVisibilityCache = {}; // Format: { 'YYYY-MM-DD': true/false }
 
 let supabaseClient = null;
 let lotteryResultsCache = {}; // Cache for lottery results
-// Supabase REST fallback config (used when client/session has auth issues)
-const SUPABASE_REST_URL = 'https://trgbzycoifdprfixkgai.supabase.co/rest/v1';
-const SUPABASE_PROJECT_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
-const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
+// Supabase configuration - Add your project details when rehosting
+const SUPABASE_PROJECT_URL = '';
+const SUPABASE_PUBLIC_KEY = '';
+const SUPABASE_REST_URL = SUPABASE_PROJECT_URL ? `${SUPABASE_PROJECT_URL}/rest/v1` : '';
 // Inline editing state for admin table cells
 const inlineEditState = {}; // key => { isEditing, currentValue, originalValue }
 
@@ -127,17 +127,18 @@ const inlineEditState = {}; // key => { isEditing, currentValue, originalValue }
 function initSupabaseClient() {
     if (supabaseClient) return;
 
-    // Check if Supabase was loaded by shared-sync.js
-    if (window.supabase) {
-        const SUPABASE_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Check if Supabase was loaded and credentials are provided
+    if (window.supabase && SUPABASE_PROJECT_URL && SUPABASE_PUBLIC_KEY) {
+        supabaseClient = window.supabase.createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_KEY);
     }
 }
 
 // Fetch all lottery results from database
 async function fetchLotteryResultsFromDB() {
     try {
+        if (!SUPABASE_PROJECT_URL || !SUPABASE_PUBLIC_KEY) {
+            return lotteryResultsCache;
+        }
         initSupabaseClient();
 
         // Prefer supabase-js client when available
@@ -145,7 +146,7 @@ async function fetchLotteryResultsFromDB() {
             try {
                 const { data, error } = await supabaseClient
                     .from('lottery_results')
-                    .select('date,time,andar,result,bahar,is_confirmed,is_day_visible');
+                    .select('date,time,sl,gl,dm,andar,result,bahar,is_confirmed,is_day_visible');
 
                 if (error) {
                     console.warn('supabase-js select error, falling back to REST:', error.message || error);
@@ -154,10 +155,16 @@ async function fetchLotteryResultsFromDB() {
                     const visibility = {};
                     data.forEach(row => {
                         if (!cache[row.date]) cache[row.date] = {};
+                        const sl = row.sl || row.andar || '--';
+                        const gl = row.gl || row.bahar || '--';
+                        const dm = row.dm || row.result || '--';
                         cache[row.date][row.time] = {
-                            andar: row.andar,
-                            result: row.result,
-                            bahar: row.bahar,
+                            sl: sl,
+                            gl: gl,
+                            dm: dm,
+                            andar: sl,
+                            bahar: gl,
+                            result: dm,
                             is_confirmed: row.is_confirmed,
                             is_day_visible: row.is_day_visible !== false
                         };
@@ -174,7 +181,7 @@ async function fetchLotteryResultsFromDB() {
 
         // Fallback: call Supabase REST endpoint directly with public key headers to avoid 401
         try {
-            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,andar,result,bahar,is_confirmed,is_day_visible`;
+            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,sl,gl,dm,andar,result,bahar,is_confirmed,is_day_visible`;
             const res = await fetch(url, {
                 headers: {
                     'apikey': SUPABASE_PUBLIC_KEY,
@@ -193,10 +200,16 @@ async function fetchLotteryResultsFromDB() {
             const visibility = {};
             data.forEach(row => {
                 if (!cache[row.date]) cache[row.date] = {};
+                const sl = row.sl || row.andar || '--';
+                const gl = row.gl || row.bahar || '--';
+                const dm = row.dm || row.result || '--';
                 cache[row.date][row.time] = {
-                    andar: row.andar,
-                    result: row.result,
-                    bahar: row.bahar,
+                    sl: sl,
+                    gl: gl,
+                    dm: dm,
+                    andar: sl,
+                    bahar: gl,
+                    result: dm,
                     is_confirmed: row.is_confirmed,
                     is_day_visible: row.is_day_visible !== false
                 };
@@ -242,12 +255,18 @@ async function autoGenerateResultsForDate(date) {
         const adminPassword = getAdminPassword();
         for (const time of TIME_SLOTS) {
             const resultNum = generateSeededNumber(date, time);
+            const sl = resultNum.charAt(0);
+            const gl = resultNum.charAt(1);
+            const dm = resultNum;
             const { error: rpcError } = await supabaseClient.rpc('update_lottery_result', {
                 p_date: date,
                 p_time: time,
-                p_andar: resultNum.charAt(0),
-                p_result: resultNum,
-                p_bahar: resultNum.charAt(1),
+                p_sl: sl,
+                p_gl: gl,
+                p_dm: dm,
+                p_andar: sl,
+                p_result: dm,
+                p_bahar: gl,
                 p_password: adminPassword,
             });
 
@@ -283,13 +302,26 @@ async function autoGenerateInitialResults() {
     }
 }
 
-// Update a lottery result via RPC (admin only)
-async function updateLotteryResultInDB(date, time, andar, result, bahar) {
+// Update a lottery result via RPC (admin only) or local cache
+async function updateLotteryResultInDB(date, time, sl, gl, dm) {
     try {
         initSupabaseClient();
         if (!supabaseClient) {
-            console.error('Supabase not initialized');
-            return false;
+            console.log('Database not connected. Saving locally.');
+            if (!lotteryResultsCache[date]) {
+                lotteryResultsCache[date] = {};
+            }
+            lotteryResultsCache[date][time] = {
+                sl,
+                gl,
+                dm,
+                andar: sl,
+                bahar: gl,
+                result: dm,
+                is_confirmed: true,
+                is_day_visible: dayVisibilityCache[date] !== false
+            };
+            return true;
         }
 
         const adminPassword = getAdminPassword();
@@ -297,9 +329,12 @@ async function updateLotteryResultInDB(date, time, andar, result, bahar) {
         const { error } = await supabaseClient.rpc('update_lottery_result', {
             p_date: date,
             p_time: time,
-            p_andar: andar,
-            p_result: result,
-            p_bahar: bahar,
+            p_sl: sl,
+            p_gl: gl,
+            p_dm: dm,
+            p_andar: sl,
+            p_result: dm,
+            p_bahar: gl,
             p_password: adminPassword
         });
 
@@ -314,14 +349,17 @@ async function updateLotteryResultInDB(date, time, andar, result, bahar) {
             lotteryResultsCache[date] = {};
         }
         lotteryResultsCache[date][time] = {
-            andar,
-            result,
-            bahar,
+            sl,
+            gl,
+            dm,
+            andar: sl,
+            bahar: gl,
+            result: dm,
             is_confirmed: true,
             is_day_visible: dayVisibilityCache[date] !== false
         };
 
-        console.log(`✅ Updated result for ${date} ${time}: ${result}`);
+        console.log(`✅ Updated result for ${date} ${time}: SL=${sl}, GL=${gl}, DM=${dm}`);
         return true;
     } catch (e) {
         console.error('Exception updating result:', e);
@@ -460,9 +498,12 @@ function initializeDateWithRandomNumbers(dataStore, date) {
 
         // Otherwise, force the seeded value to ensure all sites are consistent.
         dataStore[date][time] = {
+            sl: seededValue.charAt(0),
+            gl: seededValue.charAt(1),
+            dm: seededValue,
             andar: seededValue.charAt(0),
-            result: seededValue,
             bahar: seededValue.charAt(1),
+            result: seededValue,
         };
     });
 }
@@ -598,10 +639,16 @@ function getStoredNumber(dataStore, date, time) {
         const cached = lotteryResultsCache[date][time];
         // Only return if it's confirmed (edited by admin)
         if (cached.is_confirmed) {
+            const sl = cached.sl || cached.andar || '--';
+            const gl = cached.gl || cached.bahar || '--';
+            const dm = cached.dm || cached.result || '--';
             return {
-                andar: cached.andar || '--',
-                result: cached.result || '--',
-                bahar: cached.bahar || '--',
+                sl,
+                gl,
+                dm,
+                andar: sl,
+                bahar: gl,
+                result: dm,
                 is_day_visible: cached.is_day_visible !== false,
             };
         }
@@ -610,11 +657,17 @@ function getStoredNumber(dataStore, date, time) {
     // Auto-generate deterministic seeded result if not edited by admin.
     // This keeps the unedited results identical across all devices.
     const seededResult = generateSeededNumber(date, time);
+    const sl = seededResult.charAt(0);
+    const gl = seededResult.charAt(1);
+    const dm = seededResult;
 
     return {
-        andar: seededResult.charAt(0),
-        result: seededResult,
-        bahar: seededResult.charAt(1),
+        sl,
+        gl,
+        dm,
+        andar: sl,
+        bahar: gl,
+        result: dm,
         is_day_visible: dayVisibilityCache[date] !== false,
     };
 }
@@ -625,13 +678,16 @@ function autoConfirmPassedSlots() {
 
     Object.entries(allData).forEach(([date, timeSlots]) => {
         Object.entries(timeSlots).forEach(([time, slotValue]) => {
-            const slot = typeof slotValue === 'string' ? { andar: '--', result: slotValue, bahar: '--' } : {
-                andar: slotValue.andar || '--',
-                result: slotValue.result || '--',
-                bahar: slotValue.bahar || '--',
+            const slot = typeof slotValue === 'string' ? { sl: '--', gl: '--', dm: slotValue, andar: '--', result: slotValue, bahar: '--' } : {
+                sl: slotValue.sl || slotValue.andar || '--',
+                gl: slotValue.gl || slotValue.bahar || '--',
+                dm: slotValue.dm || slotValue.result || '--',
+                andar: slotValue.sl || slotValue.andar || '--',
+                bahar: slotValue.gl || slotValue.bahar || '--',
+                result: slotValue.dm || slotValue.result || '--',
             };
 
-            if (slot.andar === '--' && slot.result === '--' && slot.bahar === '--') {
+            if (slot.sl === '--' && slot.gl === '--' && slot.dm === '--') {
                 return;
             }
 
@@ -831,16 +887,19 @@ class LotteryData {
             TIME_SLOTS.forEach((time) => {
                 const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
-                const andarToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.andar) || '--');
-                const resultToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.result) || '--');
-                const baharToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.bahar) || '--');
+                const slToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.sl || storedSlot.andar)) || '--');
+                const glToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.gl || storedSlot.bahar)) || '--');
+                const dmToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.dm || storedSlot.result)) || '--');
 
                 results.push({
                     date,
                     time,
-                    andar: andarToShow,
-                    result: resultToShow,
-                    bahar: baharToShow,
+                    sl: slToShow,
+                    gl: glToShow,
+                    dm: dmToShow,
+                    andar: slToShow,
+                    bahar: glToShow,
+                    result: dmToShow,
                     isUpcoming,
                     is_day_visible: (storedSlot && storedSlot.is_day_visible !== false) && dayVisibilityCache[date] !== false,
                 });
@@ -861,15 +920,25 @@ class LotteryData {
         }
 
         const existing = getStoredNumber(this.data, date, time) || {
+            sl: '--',
+            gl: '--',
+            dm: '--',
             andar: '--',
             result: '--',
             bahar: '--',
         };
 
+        const sl = slotData.sl || slotData.andar || existing.sl || existing.andar || '--';
+        const gl = slotData.gl || slotData.bahar || existing.gl || existing.bahar || '--';
+        const dm = slotData.dm || slotData.result || existing.dm || existing.result || '--';
+
         this.data[date][time] = {
-            andar: slotData.andar || existing.andar || '--',
-            result: slotData.result || existing.result || '--',
-            bahar: slotData.bahar || existing.bahar || '--',
+            sl,
+            gl,
+            dm,
+            andar: sl,
+            bahar: gl,
+            result: dm,
         };
         confirmedNumbers[`${date}|${time}`] = true;
         saveConfirmedNumbers();
@@ -938,31 +1007,31 @@ function renderTable(results) {
         timeCell.className = 'table-cell-date-time';
         row.appendChild(timeCell);
 
-        const andarCell = document.createElement('td');
-        andarCell.setAttribute('data-label', 'Andar');
-        andarCell.textContent = result.andar;
-        row.appendChild(andarCell);
+        const slCell = document.createElement('td');
+        slCell.setAttribute('data-label', 'SL');
+        slCell.textContent = result.sl || result.andar;
+        row.appendChild(slCell);
 
-        const numberCell = document.createElement('td');
-        numberCell.setAttribute('data-label', 'Result');
-        numberCell.textContent = result.result;
+        const glCell = document.createElement('td');
+        glCell.setAttribute('data-label', 'GL');
+        glCell.textContent = result.gl || result.bahar;
+        row.appendChild(glCell);
 
-        const baharCell = document.createElement('td');
-        baharCell.setAttribute('data-label', 'Bahar');
-        baharCell.textContent = result.bahar;
+        const dmCell = document.createElement('td');
+        dmCell.setAttribute('data-label', 'DM');
+        dmCell.textContent = result.dm || result.result;
+        row.appendChild(dmCell);
 
         if (result.isUpcoming) {
-            andarCell.className = 'table-cell-pending';
-            numberCell.className = 'table-cell-pending';
-            baharCell.className = 'table-cell-pending';
-            numberCell.title = 'Upcoming result slot';
+            slCell.className = 'table-cell-pending';
+            glCell.className = 'table-cell-pending';
+            dmCell.className = 'table-cell-pending';
+            dmCell.title = 'Upcoming result slot';
         } else {
-            andarCell.className = 'table-cell-andar-bahar';
-            numberCell.className = 'table-cell-result';
-            baharCell.className = 'table-cell-andar-bahar';
+            slCell.className = 'table-cell-andar-bahar';
+            glCell.className = 'table-cell-andar-bahar';
+            dmCell.className = 'table-cell-result';
         }
-        row.appendChild(numberCell);
-        row.appendChild(baharCell);
 
         row.className = rowClass;
         tbody.appendChild(row);
@@ -1107,7 +1176,19 @@ function submitAdminPassword(event) {
             }
         });
     } else {
-        alert('Database connection failed.');
+        const saved = localStorage.getItem('lotteryAdminPassword') || 'matka123ratan';
+        if (enteredPassword === saved) {
+            isAdminAuthenticated = true;
+            window.isAdminAuthenticated = true;
+            closeAdminAuthModal();
+            toggleAdminPanel();
+            passwordInput.value = '';
+        } else {
+            alert('Incorrect code.');
+            setAdminPassword('');
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
     }
 }
 
@@ -1184,9 +1265,12 @@ function ensureDateHasRandomSlots(date) {
         }
 
         allData[date][time] = {
+            sl: seededValue.charAt(0),
+            gl: seededValue.charAt(1),
+            dm: seededValue,
             andar: seededValue.charAt(0),
-            result: seededValue,
             bahar: seededValue.charAt(1),
+            result: seededValue,
         };
         changed = true;
     });
@@ -1226,15 +1310,21 @@ function saveInlineAdminResult(date, time, inputId) {
     // Normalize to two digits
     if (resultValue.length === 1) resultValue = '0' + resultValue;
 
-    // Save to database via RPC
-    updateLotteryResultInDB(date, time, resultValue.charAt(0), resultValue, resultValue.charAt(1))
+    // Save to database via RPC or local
+    const sl = resultValue.charAt(0);
+    const gl = resultValue.charAt(1);
+    const dm = resultValue;
+    updateLotteryResultInDB(date, time, sl, gl, dm)
         .then(success => {
             if (success) {
                 // Also keep localStorage in sync for backward compatibility
                 lotteryData.saveResult(date, time, {
-                    andar: resultValue.charAt(0),
-                    result: resultValue,
-                    bahar: resultValue.charAt(1),
+                    sl,
+                    gl,
+                    dm,
+                    andar: sl,
+                    bahar: gl,
+                    result: dm,
                 });
 
                 populateStoredDataPreview();
@@ -1260,7 +1350,7 @@ function populateStoredDataPreview() {
     const dayData = lotteryResultsCache[selectedDate] || {};
 
     let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed;">';
-    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Andar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result</td><td style="padding: 4px; border: 1px solid #FFFF00;">Bahar</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
+    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">SL</td><td style="padding: 4px; border: 1px solid #FFFF00;">GL</td><td style="padding: 4px; border: 1px solid #FFFF00;">DM</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
 
     TIME_SLOTS.forEach((time) => {
                 const slot = getStoredNumber({
@@ -1280,12 +1370,12 @@ function populateStoredDataPreview() {
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(0)}</td>`;
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(1)}</td>`;
                 // Render display box; input will be created on demand when editing
                 const displayId = `display_${inputId}`;
                 html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
                 html += `<div id="${displayId}" class="editable-display${isLocked ? ' locked-cell' : ''}" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" data-locked="${isLocked ? 'true' : 'false'}" style="background:${isLocked ? '#2b2b2b' : '#121212'}; border:2px solid ${isLocked ? '#666' : '#FFD700'}; padding:6px 8px; border-radius:6px; color:${isLocked ? '#8d8d8d' : '#f5df21'}; font-weight:700; cursor:${isLocked ? 'not-allowed' : 'pointer'}; text-align:center; ${isLocked ? 'opacity:0.92;' : ''}">${isLocked ? `${value} 🔒` : value}</div>`;
         html += `</td>`;
-        html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(1)}</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666; color: #00FF00; word-break: break-word;">${status}</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666;"><button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 10px; cursor: pointer; white-space: nowrap;" onclick="saveInlineAdminResult('${safeDate}', '${safeTime}', '${inputId}')">Save</button></td>`;
         html += `</tr>`;

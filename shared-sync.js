@@ -1,9 +1,12 @@
 (function(global) {
-    const SUPABASE_URL = 'https://trgbzycoifdprfixkgai.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyZ2J6eWNvaWZkcHJmaXhrZ2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNTQ2MDUsImV4cCI6MjA5ODkzMDYwNX0.8XyK0pOkvNrF216kLgUPg1_5ejkQzx1fXyJatARLG-A';
+    // Supabase configuration - Add your project details when rehosting
+    const SUPABASE_URL = '';
+    const SUPABASE_KEY = '';
 
-    // Create Supabase client
-    const supabase = global.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Create Supabase client only if configured
+    const supabase = (global.supabase && SUPABASE_URL && SUPABASE_KEY)
+        ? global.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+        : null;
 
     // Keep shared sync limited to true shared settings only.
     // Lottery results now live in Supabase rows and should not be mirrored through localStorage hooks.
@@ -24,6 +27,7 @@
     }
 
     async function sendSet(key, value) {
+        if (!supabase) return;
         try {
             const { error } = await supabase.rpc('update_state', {
                 p_key: key,
@@ -45,6 +49,7 @@
     }
 
     async function sendDelete(key) {
+        if (!supabase) return;
         try {
             const { error } = await supabase.rpc('delete_state', {
                 p_key: key,
@@ -80,6 +85,7 @@
     }
 
     async function preloadFromServer() {
+        if (!supabase) return;
         const { data, error } = await supabase
             .from('shared_state')
             .select('key, value');
@@ -101,6 +107,7 @@
     }
 
     function subscribeToRealtime() {
+        if (!supabase) return;
         // Subscribe to shared_state changes
         supabase
             .channel('shared_state_changes')
@@ -154,14 +161,16 @@
 
         installHooks();
 
-        try {
-            await preloadFromServer();
-            console.log('Supabase state sync: Initial preload complete');
+        if (supabase) {
+            try {
+                await preloadFromServer();
+                console.log('Supabase state sync: Initial preload complete');
 
-            // Subscribe to real-time changes
-            subscribeToRealtime();
-        } catch (error) {
-            console.warn('Supabase preload failed:', error);
+                // Subscribe to real-time changes
+                subscribeToRealtime();
+            } catch (error) {
+                console.warn('Supabase preload failed:', error);
+            }
         }
 
         initialized = true;

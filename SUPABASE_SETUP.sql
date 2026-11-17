@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS lottery_results (
     id BIGSERIAL PRIMARY KEY,
     date DATE NOT NULL,
     time TEXT NOT NULL,
+    sl TEXT,
+    gl TEXT,
+    dm TEXT,
     andar TEXT,
     bahar TEXT,
     result TEXT,
@@ -157,6 +160,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 GRANT EXECUTE ON FUNCTION update_state(TEXT, TEXT, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION delete_state(TEXT, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION set_day_visibility(TEXT, BOOLEAN, TEXT) TO authenticated, anon;
-GRANT EXECUTE ON FUNCTION update_lottery_result(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION update_lottery_result(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated, anon;
 
 -- Note: In Supabase, the default RLS policy for newly created tables allows public access if RLS is not explicitly enabled.
