@@ -137,8 +137,20 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Drop any old overloads to ensure clean function signature
-DROP FUNCTION IF EXISTS update_lottery_result;
+-- DROP ALL previous overloads of update_lottery_result dynamically to eliminate candidate collision
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (
+        SELECT oid::regprocedure::text AS func_sig
+        FROM pg_proc
+        WHERE proname = 'update_lottery_result'
+          AND pronamespace = 'public'::regnamespace
+    ) LOOP
+        EXECUTE 'DROP FUNCTION ' || r.func_sig || ' CASCADE';
+    END LOOP;
+END $$;
 
 -- Update lottery result function (strictly SL / GL / DM only)
 CREATE OR REPLACE FUNCTION update_lottery_result(
