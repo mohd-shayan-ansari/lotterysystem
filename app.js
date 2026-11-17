@@ -501,7 +501,12 @@ function initializeDateWithRandomNumbers(dataStore, date) {
 }
 
 function hasSlotPassed(date, time) {
-    const now = new Date();
+    let now = new Date();
+    try {
+        const istStr = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+        now = new Date(istStr);
+    } catch (e) {}
+
     const todayStr = getLocalDateKey(now);
 
     if (date < todayStr) {
@@ -874,10 +879,14 @@ class LotteryData {
         while (current <= end) {
             const date = getLocalDateKey(current);
             TIME_SLOTS.forEach((time) => {
+                const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
-                const slToShow = (storedSlot && storedSlot.sl !== undefined && storedSlot.sl !== null) ? storedSlot.sl : '--';
-                const glToShow = (storedSlot && storedSlot.gl !== undefined && storedSlot.gl !== null) ? storedSlot.gl : '--';
-                const dmToShow = (storedSlot && storedSlot.dm !== undefined && storedSlot.dm !== null) ? storedSlot.dm : '--';
+                
+                // Hide result for upcoming slots from regular viewers; only authenticated admin can see ahead
+                const shouldHide = isUpcoming && !isAdminAuthenticated;
+                const slToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.sl !== undefined && storedSlot.sl !== null) ? storedSlot.sl : '--');
+                const glToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.gl !== undefined && storedSlot.gl !== null) ? storedSlot.gl : '--');
+                const dmToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.dm !== undefined && storedSlot.dm !== null) ? storedSlot.dm : '--');
 
                 results.push({
                     date,
@@ -885,7 +894,7 @@ class LotteryData {
                     sl: slToShow,
                     gl: glToShow,
                     dm: dmToShow,
-                    isUpcoming: false,
+                    isUpcoming,
                     is_day_visible: (storedSlot && storedSlot.is_day_visible !== false) && dayVisibilityCache[date] !== false,
                 });
             });
@@ -898,7 +907,6 @@ class LotteryData {
             return a.time.localeCompare(b.time);
         });
     }
-
     saveResult(date, time, slotData) {
         if (!this.data[date]) {
             this.data[date] = {};
@@ -1000,9 +1008,16 @@ function renderTable(results) {
         dmCell.textContent = result.dm || '-';
         row.appendChild(dmCell);
 
-        slCell.className = 'table-cell-sl-gl';
-        glCell.className = 'table-cell-sl-gl';
-        dmCell.className = 'table-cell-result';
+        if (result.isUpcoming && !isAdminAuthenticated) {
+            slCell.className = 'table-cell-pending';
+            glCell.className = 'table-cell-pending';
+            dmCell.className = 'table-cell-pending';
+            dmCell.title = 'Upcoming result slot';
+        } else {
+            slCell.className = 'table-cell-sl-gl';
+            glCell.className = 'table-cell-sl-gl';
+            dmCell.className = 'table-cell-result';
+        }
 
         row.className = rowClass;
         tbody.appendChild(row);
