@@ -626,30 +626,40 @@ function handleAdminDateChange() {
 }
 
 function getStoredNumber(dataStore, date, time) {
-    // ONLY use database cache to ensure consistency across devices
+    // 1. Return database cache (from Supabase) whenever available
     if (lotteryResultsCache[date] && lotteryResultsCache[date][time]) {
         const cached = lotteryResultsCache[date][time];
-        // Only return if it's confirmed (edited by admin)
-        if (cached.is_confirmed) {
-            const sl = cached.sl || '--';
-            const gl = cached.gl || '--';
-            const dm = cached.dm || '--';
-            return {
-                sl,
-                gl,
-                dm,
-                is_day_visible: cached.is_day_visible !== false,
-            };
-        }
+        const sl = (cached.sl !== undefined && cached.sl !== null) ? String(cached.sl) : '--';
+        const gl = (cached.gl !== undefined && cached.gl !== null) ? String(cached.gl) : '--';
+        const dm = (cached.dm !== undefined && cached.dm !== null) ? String(cached.dm) : '--';
+        return {
+            sl,
+            gl,
+            dm,
+            is_confirmed: cached.is_confirmed === true,
+            is_day_visible: cached.is_day_visible !== false && dayVisibilityCache[date] !== false,
+        };
     }
 
-    // Auto-generate independent seeded digits — each column is unrelated.
-    const seeded = generateSeededSlot(date, time);
+    // 2. Return local dataStore if present
+    if (dataStore && dataStore[date] && dataStore[date][time]) {
+        const local = dataStore[date][time];
+        return {
+            sl: local.sl || '--',
+            gl: local.gl || '--',
+            dm: local.dm || '--',
+            is_confirmed: local.is_confirmed === true,
+            is_day_visible: local.is_day_visible !== false && dayVisibilityCache[date] !== false,
+        };
+    }
 
+    // 3. Fallback: Seeded pseudo-random digits so slots are never empty
+    const seeded = generateSeededSlot(date, time);
     return {
         sl: seeded.sl,
         gl: seeded.gl,
         dm: seeded.dm,
+        is_confirmed: false,
         is_day_visible: dayVisibilityCache[date] !== false,
     };
 }
@@ -864,11 +874,10 @@ class LotteryData {
         while (current <= end) {
             const date = getLocalDateKey(current);
             TIME_SLOTS.forEach((time) => {
-                const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
-                const slToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.sl) || '--');
-                const glToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.gl) || '--');
-                const dmToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.dm) || '--');
+                const slToShow = (storedSlot && storedSlot.sl !== undefined && storedSlot.sl !== null) ? storedSlot.sl : '--';
+                const glToShow = (storedSlot && storedSlot.gl !== undefined && storedSlot.gl !== null) ? storedSlot.gl : '--';
+                const dmToShow = (storedSlot && storedSlot.dm !== undefined && storedSlot.dm !== null) ? storedSlot.dm : '--';
 
                 results.push({
                     date,
@@ -876,7 +885,7 @@ class LotteryData {
                     sl: slToShow,
                     gl: glToShow,
                     dm: dmToShow,
-                    isUpcoming,
+                    isUpcoming: false,
                     is_day_visible: (storedSlot && storedSlot.is_day_visible !== false) && dayVisibilityCache[date] !== false,
                 });
             });
@@ -894,7 +903,6 @@ class LotteryData {
         if (!this.data[date]) {
             this.data[date] = {};
         }
-
         const existing = getStoredNumber(this.data, date, time) || {
             sl: '--',
             gl: '--',
@@ -992,16 +1000,9 @@ function renderTable(results) {
         dmCell.textContent = result.dm || '-';
         row.appendChild(dmCell);
 
-        if (result.isUpcoming) {
-            slCell.className = 'table-cell-pending';
-            glCell.className = 'table-cell-pending';
-            dmCell.className = 'table-cell-pending';
-            dmCell.title = 'Upcoming result slot';
-        } else {
-            slCell.className = 'table-cell-sl-gl';
-            glCell.className = 'table-cell-sl-gl';
-            dmCell.className = 'table-cell-result';
-        }
+        slCell.className = 'table-cell-sl-gl';
+        glCell.className = 'table-cell-sl-gl';
+        dmCell.className = 'table-cell-result';
 
         row.className = rowClass;
         tbody.appendChild(row);
@@ -1013,20 +1014,22 @@ function renderTable(results) {
 // ================================
 
 function filterResults() {
-    applyTodayDateDefaults();
-
-    let startDate = document.getElementById('startDate').value;
-
-    if (startDate && startDate < '1996-01-01') {
-        alert('Results are only available from year 1996 onwards.');
-        startDate = '1996-01-01';
-        document.getElementById('startDate').value = '1996-01-01';
-    }
+    let startInput = document.getElementById('startDate');
+    let startDate = startInput ? startInput.value : '';
 
     if (!startDate) {
-        const today = getLocalDateKey();
-        startDate = today;
-        document.getElementById('startDate').value = today;
+        startDate = getLocalDateKey();
+        if (startInput) {
+            startInput.value = startDate;
+        }
+    }
+
+    if (startDate < '1996-01-01') {
+        alert('Results are only available from year 1996 onwards.');
+        startDate = '1996-01-01';
+        if (startInput) {
+            startInput.value = '1996-01-01';
+        }
     }
 
     lotteryData.ensureDateRange(startDate, startDate);
@@ -1036,8 +1039,8 @@ function filterResults() {
 
     const titleElem = document.getElementById('resultsTableTitle');
     if (titleElem) {
-        const fmt = (d) => { const p = d.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d; };
-        titleElem.textContent = fmt(startDate);
+        const p = startDate.split('-');
+        titleElem.textContent = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : startDate;
     }
 }
 
@@ -1506,30 +1509,30 @@ function deleteStoredResult(date, time) {
 // ================================
 
 function initializeDashboard() {
-    // Set default date range to today
-    const today = applyTodayDateDefaults() || getLocalDateKey();
+    const today = getLocalDateKey();
+    const startInput = document.getElementById('startDate');
+    if (startInput) {
+        startInput.value = today;
+    }
+
     lotteryData.ensureDate(today);
-    document.getElementById('startDate').value = today;
+
+    const titleElem = document.getElementById('resultsTableTitle');
+    if (titleElem) {
+        const parts = today.split('-');
+        titleElem.textContent = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : today;
+    }
+
+    // Render immediate view
+    filterResults();
 
     // Fetch lottery results and visibility from database on initialization
-    (async() => {
+    (async () => {
         console.log('📥 Loading lottery results from database...');
-
-        // Fetch existing results
         await fetchLotteryResultsFromDB();
-
-        // Fetch day visibility settings
         await fetchDayVisibilityFromDB();
-
-        // Auto-generate results for today and next 7 days if they don't exist
-        await autoGenerateInitialResults();
-
-        // Reload to display database results
-        window.reloadLotteryResults();
+        filterResults();
     })();
-
-    // Initial render with today's data (skeleton table)
-    filterResults();
 
     // Start live real-time clock
     updateRealTimeClock();
@@ -1537,9 +1540,8 @@ function initializeDashboard() {
         updateRealTimeClock();
     }, 1000);
 
-    console.log('🎰 Play Bhag Laxmi Dashboard Initialized');
+    console.log('🎰 Mumbai Satta Dashboard Initialized');
     console.log('Available time slots:', TIME_SLOTS);
-    console.log('Today\'s results loaded from database');
 }
 
 // Reload lottery results from database

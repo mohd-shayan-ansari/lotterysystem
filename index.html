@@ -488,7 +488,7 @@
         <div class="grid gap-3 items-end filter-grid">
             <div>
                 <label class="block field-label">Select Date</label>
-                <input type="date" id="startDate" class="input-date w-full" value="" min="1996-01-01">
+                <input type="date" id="startDate" class="input-date w-full" value="" min="1996-01-01" onchange="filterResults()">
             </div>
             <div class="filter-actions">
                 <button class="btn-primary" onclick="filterResults()">Go</button>
@@ -624,69 +624,13 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="shared-sync.js"></script>
+    <script src="app.js"></script>
     <script>
-        (function loadAppAfterSharedSync() {
-            let appStarted = false;
-
-            const startApp = function() {
-                if (appStarted) {
-                    return;
-                }
-                appStarted = true;
-
-                const startInput = document.getElementById('startDate');
-                const endInput = document.getElementById('endDate');
-                if (startInput && endInput) {
-                    const now = new Date();
-                    const year = now.getFullYear();
-                    const month = String(now.getMonth() + 1).padStart(2, '0');
-                    const day = String(now.getDate()).padStart(2, '0');
-                    const today = `${year}-${month}-${day}`;
-                    startInput.value = today;
-                    endInput.value = today;
-                }
-
-                const appScript = document.createElement('script');
-                appScript.src = 'app.js?v=20260502-03';
-                document.body.appendChild(appScript);
-            };
-
-            const refreshAfterSync = function() {
-                let retries = 0;
-                const maxRetries = 30;
-
-                const tryRefresh = function() {
-                    if (typeof window.reloadSharedData === 'function') {
-                        try {
-                            window.reloadSharedData();
-                        } catch (error) {
-                            console.warn('Post-sync refresh failed:', error);
-                        }
-                        return;
-                    }
-
-                    retries += 1;
-                    if (retries < maxRetries) {
-                        setTimeout(tryRefresh, 100);
-                    }
-                };
-
-                tryRefresh();
-            };
-
-            // Start app immediately so today's view appears without waiting on network.
-            startApp();
-
-            if (!window.SharedStateSync || typeof window.SharedStateSync.init !== 'function') {
-                return;
-            }
-
-            window.SharedStateSync.init()
-                .catch((error) => {
-                    console.warn('Shared sync init failed:', error);
-                })
-                .finally(refreshAfterSync);
-        })();
+        if (window.SharedStateSync && typeof window.SharedStateSync.init === 'function') {
+            window.SharedStateSync.init().catch(function(e) {
+                console.warn('Shared sync init failed:', e);
+            });
+        }
     </script>
 </body>
 
