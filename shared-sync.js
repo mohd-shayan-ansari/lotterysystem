@@ -178,5 +178,6 @@
 
     global.SharedStateSync = {
         init,
+        getPassword: () => currentAuthPassword,
     };
 })(window);

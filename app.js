@@ -115,7 +115,7 @@ function getAdminPassword() {
         if (syncPwd) return syncPwd;
     }
     const stored = localStorage.getItem('lotteryAdminPassword');
-    return stored && stored.trim() ? stored : '';
+    return stored && stored.trim() ? stored : 'matka123ratan';
 }
 
 function setAdminPassword(password) {
@@ -163,7 +163,7 @@ async function fetchLotteryResultsFromDB() {
             try {
                 const { data, error } = await supabaseClient
                     .from('lottery_results')
-                    .select('date,time,sl,gl,dm,andar,result,bahar,is_confirmed,is_day_visible');
+                    .select('date,time,sl,gl,dm,is_confirmed,is_day_visible');
 
                 if (error) {
                     console.warn('supabase-js select error, falling back to REST:', error.message || error);
@@ -172,16 +172,13 @@ async function fetchLotteryResultsFromDB() {
                     const visibility = {};
                     data.forEach(row => {
                         if (!cache[row.date]) cache[row.date] = {};
-                        const sl = row.sl || row.andar || '--';
-                        const gl = row.gl || row.bahar || '--';
-                        const dm = row.dm || row.result || '--';
+                        const sl = row.sl || '--';
+                        const gl = row.gl || '--';
+                        const dm = row.dm || '--';
                         cache[row.date][row.time] = {
-                            sl: sl,
-                            gl: gl,
-                            dm: dm,
-                            andar: sl,
-                            bahar: gl,
-                            result: dm,
+                            sl,
+                            gl,
+                            dm,
                             is_confirmed: row.is_confirmed,
                             is_day_visible: row.is_day_visible !== false
                         };
@@ -198,7 +195,7 @@ async function fetchLotteryResultsFromDB() {
 
         // Fallback: call Supabase REST endpoint directly with public key headers to avoid 401
         try {
-            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,sl,gl,dm,andar,result,bahar,is_confirmed,is_day_visible`;
+            const url = `${SUPABASE_REST_URL}/lottery_results?select=date,time,sl,gl,dm,is_confirmed,is_day_visible`;
             const res = await fetch(url, {
                 headers: {
                     'apikey': SUPABASE_PUBLIC_KEY,
@@ -217,16 +214,13 @@ async function fetchLotteryResultsFromDB() {
             const visibility = {};
             data.forEach(row => {
                 if (!cache[row.date]) cache[row.date] = {};
-                const sl = row.sl || row.andar || '--';
-                const gl = row.gl || row.bahar || '--';
-                const dm = row.dm || row.result || '--';
+                const sl = row.sl || '--';
+                const gl = row.gl || '--';
+                const dm = row.dm || '--';
                 cache[row.date][row.time] = {
-                    sl: sl,
-                    gl: gl,
-                    dm: dm,
-                    andar: sl,
-                    bahar: gl,
-                    result: dm,
+                    sl,
+                    gl,
+                    dm,
                     is_confirmed: row.is_confirmed,
                     is_day_visible: row.is_day_visible !== false
                 };
@@ -329,9 +323,6 @@ async function updateLotteryResultInDB(date, time, sl, gl, dm) {
                 sl,
                 gl,
                 dm,
-                andar: sl,
-                bahar: gl,
-                result: dm,
                 is_confirmed: true,
                 is_day_visible: dayVisibilityCache[date] !== false
             };
@@ -366,9 +357,6 @@ async function updateLotteryResultInDB(date, time, sl, gl, dm) {
             sl,
             gl,
             dm,
-            andar: sl,
-            bahar: gl,
-            result: dm,
             is_confirmed: true,
             is_day_visible: dayVisibilityCache[date] !== false
         };
@@ -514,9 +502,6 @@ function initializeDateWithRandomNumbers(dataStore, date) {
             sl: seeded.sl,
             gl: seeded.gl,
             dm: seeded.dm,
-            andar: seeded.sl,
-            bahar: seeded.gl,
-            result: seeded.sl + seeded.dm,
         };
     });
 }
@@ -652,16 +637,13 @@ function getStoredNumber(dataStore, date, time) {
         const cached = lotteryResultsCache[date][time];
         // Only return if it's confirmed (edited by admin)
         if (cached.is_confirmed) {
-            const sl = cached.sl || cached.andar || '--';
-            const gl = cached.gl || cached.bahar || '--';
-            const dm = cached.dm || cached.result || '--';
+            const sl = cached.sl || '--';
+            const gl = cached.gl || '--';
+            const dm = cached.dm || '--';
             return {
                 sl,
                 gl,
                 dm,
-                andar: sl,
-                bahar: gl,
-                result: dm,
                 is_day_visible: cached.is_day_visible !== false,
             };
         }
@@ -674,9 +656,6 @@ function getStoredNumber(dataStore, date, time) {
         sl: seeded.sl,
         gl: seeded.gl,
         dm: seeded.dm,
-        andar: seeded.sl,
-        bahar: seeded.gl,
-        result: seeded.sl + seeded.dm,
         is_day_visible: dayVisibilityCache[date] !== false,
     };
 }
@@ -687,13 +666,10 @@ function autoConfirmPassedSlots() {
 
     Object.entries(allData).forEach(([date, timeSlots]) => {
         Object.entries(timeSlots).forEach(([time, slotValue]) => {
-            const slot = typeof slotValue === 'string' ? { sl: '--', gl: '--', dm: slotValue, andar: '--', result: slotValue, bahar: '--' } : {
-                sl: slotValue.sl || slotValue.andar || '--',
-                gl: slotValue.gl || slotValue.bahar || '--',
-                dm: slotValue.dm || slotValue.result || '--',
-                andar: slotValue.sl || slotValue.andar || '--',
-                bahar: slotValue.gl || slotValue.bahar || '--',
-                result: slotValue.dm || slotValue.result || '--',
+            const slot = typeof slotValue === 'string' ? { sl: '--', gl: '--', dm: slotValue } : {
+                sl: slotValue.sl || '--',
+                gl: slotValue.gl || '--',
+                dm: slotValue.dm || '--',
             };
 
             if (slot.sl === '--' && slot.gl === '--' && slot.dm === '--') {
@@ -896,9 +872,9 @@ class LotteryData {
             TIME_SLOTS.forEach((time) => {
                 const isUpcoming = !hasSlotPassed(date, time);
                 const storedSlot = getStoredNumber(this.data, date, time);
-                const slToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.sl || storedSlot.andar)) || '--');
-                const glToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.gl || storedSlot.bahar)) || '--');
-                const dmToShow = isUpcoming ? 'Pending' : ((storedSlot && (storedSlot.dm || storedSlot.result)) || '--');
+                const slToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.sl) || '--');
+                const glToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.gl) || '--');
+                const dmToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.dm) || '--');
 
                 results.push({
                     date,
@@ -906,9 +882,6 @@ class LotteryData {
                     sl: slToShow,
                     gl: glToShow,
                     dm: dmToShow,
-                    andar: slToShow,
-                    bahar: glToShow,
-                    result: dmToShow,
                     isUpcoming,
                     is_day_visible: (storedSlot && storedSlot.is_day_visible !== false) && dayVisibilityCache[date] !== false,
                 });
@@ -932,22 +905,16 @@ class LotteryData {
             sl: '--',
             gl: '--',
             dm: '--',
-            andar: '--',
-            result: '--',
-            bahar: '--',
         };
 
-        const sl = slotData.sl || slotData.andar || existing.sl || existing.andar || '--';
-        const gl = slotData.gl || slotData.bahar || existing.gl || existing.bahar || '--';
-        const dm = slotData.dm || slotData.result || existing.dm || existing.result || '--';
+        const sl = slotData.sl || existing.sl || '--';
+        const gl = slotData.gl || existing.gl || '--';
+        const dm = slotData.dm || existing.dm || '--';
 
         this.data[date][time] = {
             sl,
             gl,
             dm,
-            andar: sl,
-            bahar: gl,
-            result: dm,
         };
         confirmedNumbers[`${date}|${time}`] = true;
         saveConfirmedNumbers();
@@ -1018,17 +985,17 @@ function renderTable(results) {
 
         const slCell = document.createElement('td');
         slCell.setAttribute('data-label', 'SL');
-        slCell.textContent = result.sl || result.andar;
+        slCell.textContent = result.sl || '-';
         row.appendChild(slCell);
 
         const glCell = document.createElement('td');
         glCell.setAttribute('data-label', 'GL');
-        glCell.textContent = result.gl || result.bahar;
+        glCell.textContent = result.gl || '-';
         row.appendChild(glCell);
 
         const dmCell = document.createElement('td');
         dmCell.setAttribute('data-label', 'DM');
-        dmCell.textContent = result.dm || result.result;
+        dmCell.textContent = result.dm || '-';
         row.appendChild(dmCell);
 
         if (result.isUpcoming) {
@@ -1037,8 +1004,8 @@ function renderTable(results) {
             dmCell.className = 'table-cell-pending';
             dmCell.title = 'Upcoming result slot';
         } else {
-            slCell.className = 'table-cell-andar-bahar';
-            glCell.className = 'table-cell-andar-bahar';
+            slCell.className = 'table-cell-sl-gl';
+            glCell.className = 'table-cell-sl-gl';
             dmCell.className = 'table-cell-result';
         }
 
@@ -1278,9 +1245,6 @@ function ensureDateHasRandomSlots(date) {
             sl: seeded3.sl,
             gl: seeded3.gl,
             dm: seeded3.dm,
-            andar: seeded3.sl,
-            bahar: seeded3.gl,
-            result: seeded3.sl + seeded3.dm,
         };
         changed = true;
     });
@@ -1330,9 +1294,6 @@ function saveInlineAdminResult(date, time, inputId) {
                     sl,
                     gl,
                     dm,
-                    andar: sl,
-                    bahar: gl,
-                    result: sl + dm,
                 });
 
                 populateStoredDataPreview();
@@ -1366,8 +1327,8 @@ function populateStoredDataPreview() {
                 }, selectedDate, time) || { sl: '-', gl: '-', dm: '-' };
                 const key = `${selectedDate}|${time}`;
                 const isLocked = hasSlotPassed(selectedDate, time);
-                const slVal = /^[0-9]$/.test(slot.sl || '') ? slot.sl : (slot.andar !== '--' ? slot.andar : '-');
-                const glVal = /^[0-9]$/.test(slot.gl || '') ? slot.gl : (slot.bahar !== '--' ? slot.bahar : '-');
+                const slVal = /^[0-9]$/.test(slot.sl || '') ? slot.sl : '-';
+                const glVal = /^[0-9]$/.test(slot.gl || '') ? slot.gl : '-';
                 const dmVal = /^[0-9]$/.test(slot.dm || '') ? slot.dm : '-';
                 const combinedVal = (slVal !== '-' && glVal !== '-' && dmVal !== '-') ? slVal + glVal + dmVal : '---';
                 const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
@@ -1567,7 +1528,7 @@ function initializeDashboard() {
         await fetchDayVisibilityFromDB();
 
         // Auto-generate results for today and next 7 days if they don't exist
-        // await autoGenerateInitialResults();
+        await autoGenerateInitialResults();
 
         // Reload to display database results
         window.reloadLotteryResults();

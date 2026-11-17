@@ -15,23 +15,25 @@ INSERT INTO shared_state (key, value)
 VALUES ('lotteryAdminPassword', 'matka123ratan')
 ON CONFLICT (key) DO NOTHING;
 
--- 2. Create lottery_results table
+-- 2. Create lottery_results table (ONLY sl, gl, dm — NO andar, bahar, or result)
 CREATE TABLE IF NOT EXISTS lottery_results (
     id BIGSERIAL PRIMARY KEY,
     date DATE NOT NULL,
     time TEXT NOT NULL,
-    sl TEXT,
-    gl TEXT,
-    dm TEXT,
-    andar TEXT,
-    bahar TEXT,
-    result TEXT,
+    sl TEXT NOT NULL DEFAULT '0',
+    gl TEXT NOT NULL DEFAULT '0',
+    dm TEXT NOT NULL DEFAULT '0',
     is_confirmed BOOLEAN DEFAULT false,
     is_day_visible BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(date, time)
 );
+
+-- Remove legacy columns if the table already existed previously
+ALTER TABLE lottery_results DROP COLUMN IF EXISTS andar;
+ALTER TABLE lottery_results DROP COLUMN IF EXISTS bahar;
+ALTER TABLE lottery_results DROP COLUMN IF EXISTS result;
 
 CREATE INDEX IF NOT EXISTS idx_lottery_date ON lottery_results(date);
 
@@ -121,23 +123,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Update lottery result function (supports SL / GL / DM columns)
+-- Update lottery result function (strictly SL / GL / DM only)
 CREATE OR REPLACE FUNCTION update_lottery_result(
     p_date TEXT,
     p_time TEXT,
-    p_sl TEXT DEFAULT NULL,
-    p_gl TEXT DEFAULT NULL,
-    p_dm TEXT DEFAULT NULL,
-    p_password TEXT DEFAULT '',
-    p_andar TEXT DEFAULT NULL,
-    p_result TEXT DEFAULT NULL,
-    p_bahar TEXT DEFAULT NULL
+    p_sl TEXT,
+    p_gl TEXT,
+    p_dm TEXT,
+    p_password TEXT DEFAULT ''
 ) RETURNS void AS $$
 DECLARE
     v_correct_password TEXT;
-    v_sl TEXT;
-    v_gl TEXT;
-    v_dm TEXT;
 BEGIN
     SELECT value INTO v_correct_password
     FROM shared_state
@@ -151,20 +147,12 @@ BEGIN
         RAISE EXCEPTION 'Unauthorized: Incorrect admin password';
     END IF;
 
-    -- Support both new (sl/gl/dm) and legacy (andar/result/bahar) params
-    v_sl := COALESCE(p_sl, p_andar);
-    v_gl := COALESCE(p_gl, p_bahar);
-    v_dm := COALESCE(p_dm, p_result);
-
-    INSERT INTO lottery_results (date, time, sl, gl, dm, andar, bahar, result, is_confirmed, updated_at)
-    VALUES (p_date::DATE, p_time, v_sl, v_gl, v_dm, v_sl, v_gl, v_dm, true, CURRENT_TIMESTAMP)
+    INSERT INTO lottery_results (date, time, sl, gl, dm, is_confirmed, updated_at)
+    VALUES (p_date::DATE, p_time, p_sl, p_gl, p_dm, true, CURRENT_TIMESTAMP)
     ON CONFLICT (date, time) DO UPDATE
     SET sl = EXCLUDED.sl,
         gl = EXCLUDED.gl,
         dm = EXCLUDED.dm,
-        andar = EXCLUDED.andar,
-        bahar = EXCLUDED.bahar,
-        result = EXCLUDED.result,
         is_confirmed = true,
         updated_at = CURRENT_TIMESTAMP;
 END;
@@ -174,18 +162,42 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 GRANT EXECUTE ON FUNCTION update_state(TEXT, TEXT, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION delete_state(TEXT, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION set_day_visibility(TEXT, BOOLEAN, TEXT) TO authenticated, anon;
-GRANT EXECUTE ON FUNCTION update_lottery_result(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION update_lottery_result(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated, anon;
 
--- 5. Row Level Security (RLS) - anyone can read, only via RPC to write
+-- 5. Row Level Security (RLS)
 ALTER TABLE lottery_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE shared_state ENABLE ROW LEVEL SECURITY;
 
--- Allow public read on lottery_results
+DROP POLICY IF EXISTS "public_read_results" ON lottery_results;
 CREATE POLICY "public_read_results" ON lottery_results
     FOR SELECT USING (true);
 
--- Allow public read on shared_state
+DROP POLICY IF EXISTS "public_read_state" ON shared_state;
 CREATE POLICY "public_read_state" ON shared_state
     FOR SELECT USING (true);
 
--- Note: Writes go through SECURITY DEFINER RPC functions above, so no INSERT/UPDATE policies needed.
+-- 6. Insert initial seed data for today so table is not empty
+DO $$
+DECLARE
+    v_time TEXT;
+    v_times TEXT[] := ARRAY[
+        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+        '18:00', '18:30', '19:00', '19:30', '20:00'
+    ];
+BEGIN
+    FOREACH v_time IN ARRAY v_times LOOP
+        INSERT INTO lottery_results (date, time, sl, gl, dm, is_confirmed, is_day_visible)
+        VALUES (
+            CURRENT_DATE,
+            v_time,
+            floor(random() * 10)::TEXT,
+            floor(random() * 10)::TEXT,
+            floor(random() * 10)::TEXT,
+            false,
+            true
+        )
+        ON CONFLICT (date, time) DO NOTHING;
+    END LOOP;
+END $$;
