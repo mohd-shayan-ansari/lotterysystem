@@ -1,7 +1,7 @@
 (function(global) {
     // Supabase configuration - Add your project details when rehosting
     const SUPABASE_URL = 'https://tvvctmtwrszckdyshwio.supabase.co';
-    const SUPABASE_KEY = '';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2dmN0bXR3cnN6Y2tkeXNod2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5MDEyNTYsImV4cCI6MjExMDQ3NzI1Nn0.nRqIAQp_uhEUtRAHhCljPXtnh0TxLHudMVM2pPSVHto';
 
     // Create Supabase client only if configured
     const supabase = (global.supabase && SUPABASE_URL && SUPABASE_KEY)

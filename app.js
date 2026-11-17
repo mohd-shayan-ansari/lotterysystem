@@ -135,7 +135,7 @@ let supabaseClient = null;
 let lotteryResultsCache = {}; // Cache for lottery results
 // Supabase configuration - Add your project details when rehosting
 const SUPABASE_PROJECT_URL = 'https://tvvctmtwrszckdyshwio.supabase.co';
-const SUPABASE_PUBLIC_KEY = '';
+const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2dmN0bXR3cnN6Y2tkeXNod2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5MDEyNTYsImV4cCI6MjExMDQ3NzI1Nn0.nRqIAQp_uhEUtRAHhCljPXtnh0TxLHudMVM2pPSVHto';
 const SUPABASE_REST_URL = SUPABASE_PROJECT_URL ? `${SUPABASE_PROJECT_URL}/rest/v1` : '';
 // Inline editing state for admin table cells
 const inlineEditState = {}; // key => { isEditing, currentValue, originalValue }
@@ -1358,7 +1358,7 @@ function populateStoredDataPreview() {
     const dayData = lotteryResultsCache[selectedDate] || {};
 
     let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed;">';
-    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">SL</td><td style="padding: 4px; border: 1px solid #FFFF00;">GL</td><td style="padding: 4px; border: 1px solid #FFFF00;">DM</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
+    html += '<tr style="background-color: #444; border: 1px solid #FFFF00;"><td style="padding: 4px; border: 1px solid #FFFF00;">Date</td><td style="padding: 4px; border: 1px solid #FFFF00;">Time</td><td style="padding: 4px; border: 1px solid #FFFF00;">Result (3 Digits)</td><td style="padding: 4px; border: 1px solid #FFFF00;">Status</td><td style="padding: 4px; border: 1px solid #FFFF00;">Action</td></tr>';
 
     TIME_SLOTS.forEach((time) => {
                 const slot = getStoredNumber({
@@ -1380,9 +1380,7 @@ function populateStoredDataPreview() {
                 html += `<tr style="background-color: #333; border: 1px solid #666;">`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
-                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word; font-weight:bold; color:#57e06d;">${slVal}</td>`;
-                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word; font-weight:bold; color:#57e06d;">${glVal}</td>`;
-                // DM cell is the editable input (shows all 3 digits for edit)
+                                // DM cell is the editable input (shows all 3 digits for edit)
                 const displayId = `display_${inputId}`;
                 html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
                 html += `<div id="${displayId}" class="editable-display${isLocked ? ' locked-cell' : ''}" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" data-locked="${isLocked ? 'true' : 'false'}" style="background:${isLocked ? '#2b2b2b' : '#121212'}; border:2px solid ${isLocked ? '#666' : '#FFD700'}; padding:6px 8px; border-radius:6px; color:${isLocked ? '#8d8d8d' : '#f5df21'}; font-weight:700; cursor:${isLocked ? 'not-allowed' : 'pointer'}; text-align:center; letter-spacing:3px; ${isLocked ? 'opacity:0.92;' : ''}" title="Click to edit — enter 3 digits">${isLocked ? `${combinedVal} 🔒` : combinedVal}</div>`;
