@@ -883,10 +883,10 @@ class LotteryData {
                 const storedSlot = getStoredNumber(this.data, date, time);
                 
                 // Hide result for upcoming slots from regular viewers; only authenticated admin can see ahead
-                const shouldHide = isUpcoming && !isAdminAuthenticated;
-                const slToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.sl !== undefined && storedSlot.sl !== null) ? storedSlot.sl : '--');
-                const glToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.gl !== undefined && storedSlot.gl !== null) ? storedSlot.gl : '--');
-                const dmToShow = shouldHide ? 'Pending' : ((storedSlot && storedSlot.dm !== undefined && storedSlot.dm !== null) ? storedSlot.dm : '--');
+                // Main page NEVER shows upcoming results until their scheduled time arrives (visible ONLY in admin panel)
+                const slToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.sl !== undefined && storedSlot.sl !== null) ? storedSlot.sl : '--');
+                const glToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.gl !== undefined && storedSlot.gl !== null) ? storedSlot.gl : '--');
+                const dmToShow = isUpcoming ? 'Pending' : ((storedSlot && storedSlot.dm !== undefined && storedSlot.dm !== null) ? storedSlot.dm : '--');
 
                 results.push({
                     date,
@@ -1008,7 +1008,7 @@ function renderTable(results) {
         dmCell.textContent = result.dm || '-';
         row.appendChild(dmCell);
 
-        if (result.isUpcoming && !isAdminAuthenticated) {
+        if (result.isUpcoming) {
             slCell.className = 'table-cell-pending';
             glCell.className = 'table-cell-pending';
             dmCell.className = 'table-cell-pending';
