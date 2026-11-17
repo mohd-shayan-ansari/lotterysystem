@@ -53,7 +53,7 @@ const TIME_SLOTS = generateTimeSlots();
 
 function generateTimeSlots() {
     const slots = [];
-    const endMinutes = 21 * 60;
+    const endMinutes = 20 * 60;
     let currentMinutes = 9 * 60;
 
     while (currentMinutes <= endMinutes) {
