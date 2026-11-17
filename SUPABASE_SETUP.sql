@@ -51,21 +51,21 @@ CREATE OR REPLACE FUNCTION update_state(
 DECLARE
     v_correct_password TEXT;
 BEGIN
-    SELECT value INTO v_correct_password 
-    FROM shared_state 
+    SELECT value INTO v_correct_password
+    FROM shared_state
     WHERE key = 'lotteryAdminPassword';
-    
-    IF v_correct_password IS NULL THEN 
-        v_correct_password := 'matka123ratan'; 
+
+    IF v_correct_password IS NULL THEN
+        v_correct_password := 'matka123ratan';
     END IF;
-    
+
     IF p_password != v_correct_password THEN
         RAISE EXCEPTION 'Unauthorized: Incorrect admin password';
     END IF;
-    
+
     INSERT INTO shared_state (key, value, updated_at)
     VALUES (p_key, p_value, CURRENT_TIMESTAMP)
-    ON CONFLICT (key) DO UPDATE 
+    ON CONFLICT (key) DO UPDATE
     SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -78,18 +78,18 @@ CREATE OR REPLACE FUNCTION delete_state(
 DECLARE
     v_correct_password TEXT;
 BEGIN
-    SELECT value INTO v_correct_password 
-    FROM shared_state 
+    SELECT value INTO v_correct_password
+    FROM shared_state
     WHERE key = 'lotteryAdminPassword';
-    
-    IF v_correct_password IS NULL THEN 
-        v_correct_password := 'matka123ratan'; 
+
+    IF v_correct_password IS NULL THEN
+        v_correct_password := 'matka123ratan';
     END IF;
-    
+
     IF p_password != v_correct_password THEN
         RAISE EXCEPTION 'Unauthorized: Incorrect admin password';
     END IF;
-    
+
     DELETE FROM shared_state WHERE key = p_key AND key != 'lotteryAdminPassword';
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -103,54 +103,68 @@ CREATE OR REPLACE FUNCTION set_day_visibility(
 DECLARE
     v_correct_password TEXT;
 BEGIN
-    SELECT value INTO v_correct_password 
-    FROM shared_state 
+    SELECT value INTO v_correct_password
+    FROM shared_state
     WHERE key = 'lotteryAdminPassword';
-    
-    IF v_correct_password IS NULL THEN 
-        v_correct_password := 'matka123ratan'; 
+
+    IF v_correct_password IS NULL THEN
+        v_correct_password := 'matka123ratan';
     END IF;
-    
+
     IF p_password != v_correct_password THEN
         RAISE EXCEPTION 'Unauthorized: Incorrect admin password';
     END IF;
-    
-    UPDATE lottery_results 
-    SET is_day_visible = p_is_visible 
+
+    UPDATE lottery_results
+    SET is_day_visible = p_is_visible
     WHERE date = p_date::DATE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Update lottery result function
+-- Update lottery result function (supports SL / GL / DM columns)
 CREATE OR REPLACE FUNCTION update_lottery_result(
     p_date TEXT,
     p_time TEXT,
-    p_andar TEXT,
-    p_result TEXT,
-    p_bahar TEXT,
-    p_password TEXT
+    p_sl TEXT DEFAULT NULL,
+    p_gl TEXT DEFAULT NULL,
+    p_dm TEXT DEFAULT NULL,
+    p_password TEXT DEFAULT '',
+    p_andar TEXT DEFAULT NULL,
+    p_result TEXT DEFAULT NULL,
+    p_bahar TEXT DEFAULT NULL
 ) RETURNS void AS $$
 DECLARE
     v_correct_password TEXT;
+    v_sl TEXT;
+    v_gl TEXT;
+    v_dm TEXT;
 BEGIN
-    SELECT value INTO v_correct_password 
-    FROM shared_state 
+    SELECT value INTO v_correct_password
+    FROM shared_state
     WHERE key = 'lotteryAdminPassword';
-    
-    IF v_correct_password IS NULL THEN 
-        v_correct_password := 'matka123ratan'; 
+
+    IF v_correct_password IS NULL THEN
+        v_correct_password := 'matka123ratan';
     END IF;
-    
+
     IF p_password != v_correct_password THEN
         RAISE EXCEPTION 'Unauthorized: Incorrect admin password';
     END IF;
-    
-    INSERT INTO lottery_results (date, time, andar, result, bahar, is_confirmed, updated_at)
-    VALUES (p_date::DATE, p_time, p_andar, p_result, p_bahar, true, CURRENT_TIMESTAMP)
-    ON CONFLICT (date, time) DO UPDATE 
-    SET andar = EXCLUDED.andar,
-        result = EXCLUDED.result,
+
+    -- Support both new (sl/gl/dm) and legacy (andar/result/bahar) params
+    v_sl := COALESCE(p_sl, p_andar);
+    v_gl := COALESCE(p_gl, p_bahar);
+    v_dm := COALESCE(p_dm, p_result);
+
+    INSERT INTO lottery_results (date, time, sl, gl, dm, andar, bahar, result, is_confirmed, updated_at)
+    VALUES (p_date::DATE, p_time, v_sl, v_gl, v_dm, v_sl, v_gl, v_dm, true, CURRENT_TIMESTAMP)
+    ON CONFLICT (date, time) DO UPDATE
+    SET sl = EXCLUDED.sl,
+        gl = EXCLUDED.gl,
+        dm = EXCLUDED.dm,
+        andar = EXCLUDED.andar,
         bahar = EXCLUDED.bahar,
+        result = EXCLUDED.result,
         is_confirmed = true,
         updated_at = CURRENT_TIMESTAMP;
 END;
@@ -162,4 +176,16 @@ GRANT EXECUTE ON FUNCTION delete_state(TEXT, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION set_day_visibility(TEXT, BOOLEAN, TEXT) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION update_lottery_result(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO authenticated, anon;
 
--- Note: In Supabase, the default RLS policy for newly created tables allows public access if RLS is not explicitly enabled.
+-- 5. Row Level Security (RLS) - anyone can read, only via RPC to write
+ALTER TABLE lottery_results ENABLE ROW LEVEL SECURITY;
+ALTER TABLE shared_state ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read on lottery_results
+CREATE POLICY "public_read_results" ON lottery_results
+    FOR SELECT USING (true);
+
+-- Allow public read on shared_state
+CREATE POLICY "public_read_state" ON shared_state
+    FOR SELECT USING (true);
+
+-- Note: Writes go through SECURITY DEFINER RPC functions above, so no INSERT/UPDATE policies needed.
