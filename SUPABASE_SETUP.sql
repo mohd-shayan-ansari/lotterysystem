@@ -137,6 +137,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Drop any old overloads to ensure clean function signature
+DROP FUNCTION IF EXISTS update_lottery_result;
+
 -- Update lottery result function (strictly SL / GL / DM only)
 CREATE OR REPLACE FUNCTION update_lottery_result(
     p_date TEXT,

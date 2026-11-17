@@ -272,9 +272,6 @@ async function autoGenerateResultsForDate(date) {
                 p_sl: seeded.sl,
                 p_gl: seeded.gl,
                 p_dm: seeded.dm,
-                p_andar: seeded.sl,
-                p_result: seeded.sl + seeded.dm,
-                p_bahar: seeded.gl,
                 p_password: adminPassword,
             });
 
@@ -337,9 +334,6 @@ async function updateLotteryResultInDB(date, time, sl, gl, dm) {
             p_sl: sl,
             p_gl: gl,
             p_dm: dm,
-            p_andar: sl,
-            p_result: dm,
-            p_bahar: gl,
             p_password: adminPassword
         });
 
