@@ -69,17 +69,34 @@ function generateTimeSlots() {
 }
 
 // Helper function to generate deterministic number based on date and time
+// Helper: generate a single deterministic seeded digit (0-9) per column
+function generateSeededDigit(date, time, column) {
+    const salt = {sl:'SL', gl:'GL', dm:'DM'}[column] || column;
+    const seedStr = (date || '2026-01-01').replace(/-/g, '')
+                  + (time || '00:00').replace(/:/g, '')
+                  + salt;
+    let seed = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+        seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
+    }
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return String(seed % 10);
+}
+
+// Generate three independent seeded digits (SL, GL, DM) for a time slot
+function generateSeededSlot(date, time) {
+    return {
+        sl: generateSeededDigit(date, time, 'sl'),
+        gl: generateSeededDigit(date, time, 'gl'),
+        dm: generateSeededDigit(date, time, 'dm'),
+    };
+}
+
+// Legacy compatibility
 function generateSeededNumber(date, time) {
-    // Create a seed from date string (YYYY-MM-DD) and time string (HH:MM)
-    const seedStr = (date || '2026-01-01').replace(/-/g, '') + (time || '00:00').replace(/:/g, '');
-    let seed = parseInt(seedStr);
-
-    // Simple Linear Congruential Generator
-    seed = (seed * 1664525 + 1013904223) % 4294967296;
-    seed = (seed * 1664525 + 1013904223) % 4294967296; // Second pass for better distribution
-
-    const result = seed % 100;
-    return String(result).padStart(2, '0');
+    const s = generateSeededSlot(date, time);
+    return s.sl + s.gl;
 }
 
 function generateRandomNumber() {
@@ -117,7 +134,7 @@ let dayVisibilityCache = {}; // Format: { 'YYYY-MM-DD': true/false }
 let supabaseClient = null;
 let lotteryResultsCache = {}; // Cache for lottery results
 // Supabase configuration - Add your project details when rehosting
-const SUPABASE_PROJECT_URL = '';
+const SUPABASE_PROJECT_URL = 'https://tvvctmtwrszckdyshwio.supabase.co';
 const SUPABASE_PUBLIC_KEY = '';
 const SUPABASE_REST_URL = SUPABASE_PROJECT_URL ? `${SUPABASE_PROJECT_URL}/rest/v1` : '';
 // Inline editing state for admin table cells
@@ -254,19 +271,16 @@ async function autoGenerateResultsForDate(date) {
         // Generate each slot via the secure RPC so it bypasses row-level insert restrictions.
         const adminPassword = getAdminPassword();
         for (const time of TIME_SLOTS) {
-            const resultNum = generateSeededNumber(date, time);
-            const sl = resultNum.charAt(0);
-            const gl = resultNum.charAt(1);
-            const dm = resultNum;
+            const seeded = generateSeededSlot(date, time);
             const { error: rpcError } = await supabaseClient.rpc('update_lottery_result', {
                 p_date: date,
                 p_time: time,
-                p_sl: sl,
-                p_gl: gl,
-                p_dm: dm,
-                p_andar: sl,
-                p_result: dm,
-                p_bahar: gl,
+                p_sl: seeded.sl,
+                p_gl: seeded.gl,
+                p_dm: seeded.dm,
+                p_andar: seeded.sl,
+                p_result: seeded.sl + seeded.dm,
+                p_bahar: seeded.gl,
                 p_password: adminPassword,
             });
 
@@ -488,22 +502,21 @@ function initializeDateWithRandomNumbers(dataStore, date) {
             return;
         }
 
-        // Generate the deterministic seeded value for this slot.
-        const seededValue = generateSeededNumber(date, time);
+        // Generate independent seeded digits for this slot.
+        const seeded = generateSeededSlot(date, time);
 
-        // If the current value is already the seeded value, no need to update.
-        if (existing && existing.result === seededValue) {
+        // If already seeded, skip.
+        if (existing && existing.sl === seeded.sl && existing.gl === seeded.gl && existing.dm === seeded.dm) {
             return;
         }
 
-        // Otherwise, force the seeded value to ensure all sites are consistent.
         dataStore[date][time] = {
-            sl: seededValue.charAt(0),
-            gl: seededValue.charAt(1),
-            dm: seededValue,
-            andar: seededValue.charAt(0),
-            bahar: seededValue.charAt(1),
-            result: seededValue,
+            sl: seeded.sl,
+            gl: seeded.gl,
+            dm: seeded.dm,
+            andar: seeded.sl,
+            bahar: seeded.gl,
+            result: seeded.sl + seeded.dm,
         };
     });
 }
@@ -654,20 +667,16 @@ function getStoredNumber(dataStore, date, time) {
         }
     }
 
-    // Auto-generate deterministic seeded result if not edited by admin.
-    // This keeps the unedited results identical across all devices.
-    const seededResult = generateSeededNumber(date, time);
-    const sl = seededResult.charAt(0);
-    const gl = seededResult.charAt(1);
-    const dm = seededResult;
+    // Auto-generate independent seeded digits — each column is unrelated.
+    const seeded = generateSeededSlot(date, time);
 
     return {
-        sl,
-        gl,
-        dm,
-        andar: sl,
-        bahar: gl,
-        result: dm,
+        sl: seeded.sl,
+        gl: seeded.gl,
+        dm: seeded.dm,
+        andar: seeded.sl,
+        bahar: seeded.gl,
+        result: seeded.sl + seeded.dm,
         is_day_visible: dayVisibilityCache[date] !== false,
     };
 }
@@ -1264,13 +1273,14 @@ function ensureDateHasRandomSlots(date) {
             return;
         }
 
+        const seeded3 = generateSeededSlot(date, time);
         allData[date][time] = {
-            sl: seededValue.charAt(0),
-            gl: seededValue.charAt(1),
-            dm: seededValue,
-            andar: seededValue.charAt(0),
-            bahar: seededValue.charAt(1),
-            result: seededValue,
+            sl: seeded3.sl,
+            gl: seeded3.gl,
+            dm: seeded3.dm,
+            andar: seeded3.sl,
+            bahar: seeded3.gl,
+            result: seeded3.sl + seeded3.dm,
         };
         changed = true;
     });
@@ -1302,18 +1312,16 @@ function saveInlineAdminResult(date, time, inputId) {
     }
 
     resultValue = resultValue.trim();
-    if (!/^[0-9]{1,2}$/.test(resultValue)) {
-        alert('Enter exactly 1 or 2 digits from 0 to 99.');
+    if (!/^[0-9]{3}$/.test(resultValue)) {
+        alert('Enter exactly 3 digits (e.g. 246). SL=2, GL=4, DM=6.');
         if (input) input.focus();
         return;
     }
-    // Normalize to two digits
-    if (resultValue.length === 1) resultValue = '0' + resultValue;
 
-    // Save to database via RPC or local
-    const sl = resultValue.charAt(0);
-    const gl = resultValue.charAt(1);
-    const dm = resultValue;
+    // Each digit goes to its own column
+    const sl = resultValue.charAt(0);  // SL
+    const gl = resultValue.charAt(1);  // GL
+    const dm = resultValue.charAt(2);  // DM
     updateLotteryResultInDB(date, time, sl, gl, dm)
         .then(success => {
             if (success) {
@@ -1324,7 +1332,7 @@ function saveInlineAdminResult(date, time, inputId) {
                     dm,
                     andar: sl,
                     bahar: gl,
-                    result: dm,
+                    result: sl + dm,
                 });
 
                 populateStoredDataPreview();
@@ -1355,26 +1363,29 @@ function populateStoredDataPreview() {
     TIME_SLOTS.forEach((time) => {
                 const slot = getStoredNumber({
                     [selectedDate]: lotteryData.getAll()[selectedDate] || {}
-                }, selectedDate, time) || { andar: '--', result: '--', bahar: '--' };
+                }, selectedDate, time) || { sl: '-', gl: '-', dm: '-' };
                 const key = `${selectedDate}|${time}`;
                 const isLocked = hasSlotPassed(selectedDate, time);
-                const value = /^[0-9]{2}$/.test(slot.result || '') ? slot.result : '--';
+                const slVal = /^[0-9]$/.test(slot.sl || '') ? slot.sl : (slot.andar !== '--' ? slot.andar : '-');
+                const glVal = /^[0-9]$/.test(slot.gl || '') ? slot.gl : (slot.bahar !== '--' ? slot.bahar : '-');
+                const dmVal = /^[0-9]$/.test(slot.dm || '') ? slot.dm : '-';
+                const combinedVal = (slVal !== '-' && glVal !== '-' && dmVal !== '-') ? slVal + glVal + dmVal : '---';
                 const isFromDB = lotteryResultsCache[selectedDate] && lotteryResultsCache[selectedDate][time];
                 const status = isFromDB && lotteryResultsCache[selectedDate][time].is_confirmed ?
                     '✅ DB (Editable)' : 'Editable';
                 const inputId = `slot_${selectedDate}_${time}`.replace(/[^a-zA-Z0-9_]/g, '_');
-                const safeDate = selectedDate.replace(/'/g, "\\'");
-                const safeTime = time.replace(/'/g, "\\'");
+                const safeDate = selectedDate.replace(/'/g, "\'");
+                const safeTime = time.replace(/'/g, "\'");
 
                 html += `<tr style="background-color: #333; border: 1px solid #666;">`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatDateDisplay(selectedDate)}</td>`;
                 html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${formatTimeDisplay(time)}</td>`;
-                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(0)}</td>`;
-                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word;">${value.charAt(1)}</td>`;
-                // Render display box; input will be created on demand when editing
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word; font-weight:bold; color:#57e06d;">${slVal}</td>`;
+                html += `<td style="padding: 4px; border: 1px solid #666; word-break: break-word; font-weight:bold; color:#57e06d;">${glVal}</td>`;
+                // DM cell is the editable input (shows all 3 digits for edit)
                 const displayId = `display_${inputId}`;
                 html += `<td style="padding: 4px; border: 1px solid #666; user-select: none;">`;
-                html += `<div id="${displayId}" class="editable-display${isLocked ? ' locked-cell' : ''}" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" data-locked="${isLocked ? 'true' : 'false'}" style="background:${isLocked ? '#2b2b2b' : '#121212'}; border:2px solid ${isLocked ? '#666' : '#FFD700'}; padding:6px 8px; border-radius:6px; color:${isLocked ? '#8d8d8d' : '#f5df21'}; font-weight:700; cursor:${isLocked ? 'not-allowed' : 'pointer'}; text-align:center; ${isLocked ? 'opacity:0.92;' : ''}">${isLocked ? `${value} 🔒` : value}</div>`;
+                html += `<div id="${displayId}" class="editable-display${isLocked ? ' locked-cell' : ''}" data-inputid="${inputId}" data-date="${selectedDate}" data-time="${time}" data-locked="${isLocked ? 'true' : 'false'}" style="background:${isLocked ? '#2b2b2b' : '#121212'}; border:2px solid ${isLocked ? '#666' : '#FFD700'}; padding:6px 8px; border-radius:6px; color:${isLocked ? '#8d8d8d' : '#f5df21'}; font-weight:700; cursor:${isLocked ? 'not-allowed' : 'pointer'}; text-align:center; letter-spacing:3px; ${isLocked ? 'opacity:0.92;' : ''}" title="Click to edit — enter 3 digits">${isLocked ? `${combinedVal} 🔒` : combinedVal}</div>`;
         html += `</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666; color: #00FF00; word-break: break-word;">${status}</td>`;
         html += `<td style="padding: 4px; border: 1px solid #666;"><button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 10px; cursor: pointer; white-space: nowrap;" onclick="saveInlineAdminResult('${safeDate}', '${safeTime}', '${inputId}')">Save</button></td>`;
@@ -1416,16 +1427,16 @@ function startInlineEdit(date, time, inputId) {
     const original = displayEl.textContent.trim();
     inlineEditState[key] = { isEditing: true, currentValue: original, originalValue: original };
 
-    // Create input element
+    // Create input element — accepts exactly 3 digits (SL GL DM)
     const input = document.createElement('input');
-    input.type = 'number';
+    input.type = 'text';
     input.inputMode = 'numeric';
-    input.min = 0;
-    input.max = 99;
-    input.step = 1;
+    input.maxLength = 3;
+    input.pattern = '[0-9]{3}';
+    input.placeholder = '000';
     input.id = inputId;
-    input.value = original;
-    input.style.cssText = 'background-color: #222; color: #f5df21; border: 2px solid #FFD700; border-radius: 4px; padding: 6px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; cursor: text;';
+    input.value = original.replace(/[^0-9]/g, '');
+    input.style.cssText = 'background-color: #222; color: #f5df21; border: 2px solid #FFD700; border-radius: 4px; padding: 6px; width: 100%; text-align: center; font-size: 14px; font-weight: bold; cursor: text; letter-spacing: 4px;';
 
     // Handlers
     input.addEventListener('keydown', (e) => {
@@ -1454,10 +1465,9 @@ function commitInlineEdit(date, time, inputId, saveImmediately) {
     const displayId = `display_${inputId}`;
     let newVal = '';
     if (input) {
-        newVal = String(input.value || '').padStart(2, '0');
-        // Basic validation
-        if (!/^[0-9]{1,2}$/.test(newVal)) {
-            newVal = inlineEditState[key] ? inlineEditState[key].originalValue : '00';
+        newVal = String(input.value || '').replace(/[^0-9]/g, '');
+        if (!/^[0-9]{3}$/.test(newVal)) {
+            newVal = inlineEditState[key] ? inlineEditState[key].originalValue : '000';
         }
     } else {
         // fallback: nothing to commit
@@ -1492,7 +1502,8 @@ function commitInlineEdit(date, time, inputId, saveImmediately) {
 
     if (saveImmediately) {
         // call save function which will use inputId to read value (input no longer exists), so call RPC directly
-        updateLotteryResultInDB(date, time, newVal.charAt(0), newVal, newVal.charAt(1)).then(success => {
+        const cSl = newVal.charAt(0), cGl = newVal.charAt(1), cDm = newVal.charAt(2);
+        updateLotteryResultInDB(date, time, cSl, cGl, cDm).then(success => {
             if (success) {
                 // refresh preview
                 populateStoredDataPreview();
@@ -1505,7 +1516,7 @@ function cancelInlineEdit(date, time, inputId) {
     const key = `${date}|${time}`;
     const displayId = `display_${inputId}`;
     const state = inlineEditState[key];
-    const current = state ? state.originalValue : '00';
+    const current = state ? state.originalValue : '000';
 
     const displayEl = document.createElement('div');
     displayEl.id = displayId;

@@ -1,6 +1,6 @@
 (function(global) {
     // Supabase configuration - Add your project details when rehosting
-    const SUPABASE_URL = '';
+    const SUPABASE_URL = 'https://tvvctmtwrszckdyshwio.supabase.co';
     const SUPABASE_KEY = '';
 
     // Create Supabase client only if configured
